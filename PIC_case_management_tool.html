@@ -1,0 +1,450 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-sans);background:var(--color-background-tertiary);color:var(--color-text-primary)}
+.app{display:flex;height:100vh;min-height:600px}
+.sidebar{width:220px;min-width:220px;background:var(--color-background-primary);border-right:0.5px solid var(--color-border-tertiary);display:flex;flex-direction:column;padding:0}
+.logo{padding:20px 16px 16px;border-bottom:0.5px solid var(--color-border-tertiary)}
+.logo-title{font-size:13px;font-weight:500;letter-spacing:.04em;color:var(--color-text-primary)}
+.logo-sub{font-size:11px;color:var(--color-text-tertiary);margin-top:2px}
+.nav{padding:12px 8px;flex:1}
+.nav-item{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:var(--border-radius-md);cursor:pointer;font-size:13px;color:var(--color-text-secondary);margin-bottom:2px;border:none;background:none;width:100%;text-align:left}
+.nav-item:hover{background:var(--color-background-secondary);color:var(--color-text-primary)}
+.nav-item.active{background:var(--color-background-secondary);color:var(--color-text-primary);font-weight:500}
+.nav-item i{font-size:16px}
+.nav-label{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--color-text-tertiary);padding:12px 10px 6px}
+.badge{margin-left:auto;background:var(--color-background-info);color:var(--color-text-info);font-size:11px;padding:1px 7px;border-radius:10px;font-weight:500}
+.main{flex:1;overflow-y:auto;display:flex;flex-direction:column}
+.topbar{background:var(--color-background-primary);border-bottom:0.5px solid var(--color-border-tertiary);padding:14px 24px;display:flex;align-items:center;gap:12px}
+.topbar-title{font-size:15px;font-weight:500;flex:1}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:none;font-size:13px;cursor:pointer;color:var(--color-text-primary);font-family:var(--font-sans)}
+.btn:hover{background:var(--color-background-secondary)}
+.btn-primary{background:var(--color-text-primary);color:var(--color-background-primary);border-color:var(--color-text-primary)}
+.btn-primary:hover{opacity:.85}
+.btn i{font-size:15px}
+.content{padding:24px;flex:1}
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px}
+.metric{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:14px 16px}
+.metric-label{font-size:12px;color:var(--color-text-secondary);margin-bottom:6px}
+.metric-value{font-size:22px;font-weight:500}
+.metric-sub{font-size:12px;color:var(--color-text-secondary);margin-top:3px}
+.pipeline{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px}
+.stage{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:14px}
+.stage-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.stage-name{font-size:12px;font-weight:500;color:var(--color-text-secondary);text-transform:uppercase;letter-spacing:.05em}
+.stage-count{font-size:12px;font-weight:500;padding:2px 8px;border-radius:10px}
+.stage-lead .stage-count{background:#E6F1FB;color:#185FA5}
+.stage-intake .stage-count{background:#FAEEDA;color:#854F0B}
+.stage-signed .stage-count{background:#EEEDFE;color:#534AB7}
+.stage-settlement .stage-count{background:#EAF3DE;color:#3B6D11}
+.case-card{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:10px 12px;margin-bottom:8px;cursor:pointer;border:0.5px solid transparent}
+.case-card:hover{border-color:var(--color-border-secondary)}
+.case-name{font-size:13px;font-weight:500;margin-bottom:3px}
+.case-meta{font-size:12px;color:var(--color-text-secondary)}
+.case-type{display:inline-block;font-size:11px;padding:2px 7px;border-radius:10px;margin-top:5px}
+.type-auto{background:#E6F1FB;color:#185FA5}
+.type-slip{background:#FAEEDA;color:#854F0B}
+.type-work{background:#EEEDFE;color:#534AB7}
+.type-medical{background:#EAF3DE;color:#3B6D11}
+.type-other{background:#F1EFE8;color:#5F5E5A}
+.section-title{font-size:14px;font-weight:500;margin-bottom:12px}
+.table-wrap{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{text-align:left;padding:10px 16px;font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--color-text-secondary);font-weight:500;border-bottom:0.5px solid var(--color-border-tertiary);background:var(--color-background-secondary)}
+td{padding:11px 16px;border-bottom:0.5px solid var(--color-border-tertiary);vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:var(--color-background-secondary)}
+.status-pill{display:inline-flex;align-items:center;gap:5px;font-size:12px;padding:3px 10px;border-radius:10px;font-weight:500}
+.pill-lead{background:#E6F1FB;color:#185FA5}
+.pill-intake{background:#FAEEDA;color:#854F0B}
+.pill-signed{background:#EEEDFE;color:#534AB7}
+.pill-settlement{background:#EAF3DE;color:#3B6D11}
+.pill-dot{width:6px;height:6px;border-radius:50%;background:currentColor;display:inline-block}
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:100;align-items:flex-start;justify-content:center;padding-top:40px}
+.modal-bg.open{display:flex}
+.modal{background:var(--color-background-primary);border-radius:var(--border-radius-lg);width:600px;max-height:80vh;overflow-y:auto;border:0.5px solid var(--color-border-tertiary)}
+.modal-header{padding:20px 24px 16px;border-bottom:0.5px solid var(--color-border-tertiary);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:var(--color-background-primary);z-index:1}
+.modal-title{font-size:15px;font-weight:500}
+.modal-body{padding:20px 24px}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+.field{display:flex;flex-direction:column;gap:5px}
+.field label{font-size:12px;color:var(--color-text-secondary);font-weight:500}
+.field input,.field select,.field textarea{padding:8px 10px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:var(--color-background-secondary);color:var(--color-text-primary);font-size:13px;font-family:var(--font-sans)}
+.field textarea{resize:vertical;min-height:70px}
+.field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:var(--color-border-primary)}
+.modal-footer{padding:16px 24px;border-top:0.5px solid var(--color-border-tertiary);display:flex;justify-content:flex-end;gap:8px;position:sticky;bottom:0;background:var(--color-background-primary)}
+.detail-section{margin-bottom:20px}
+.detail-section h3{font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--color-text-secondary);font-weight:500;margin-bottom:10px}
+.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.detail-item{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:10px 12px}
+.detail-item .di-label{font-size:11px;color:var(--color-text-tertiary);margin-bottom:3px}
+.detail-item .di-value{font-size:13px;font-weight:500}
+.timeline{border-left:2px solid var(--color-border-tertiary);padding-left:16px;margin-left:8px}
+.tl-item{position:relative;margin-bottom:14px}
+.tl-dot{width:10px;height:10px;border-radius:50%;background:var(--color-text-secondary);position:absolute;left:-21px;top:3px}
+.tl-dot.active{background:#185FA5}
+.tl-date{font-size:11px;color:var(--color-text-tertiary)}
+.tl-text{font-size:13px}
+.file-upload-area{border:1.5px dashed var(--color-border-secondary);border-radius:var(--border-radius-md);padding:20px;text-align:center;cursor:pointer;margin-top:6px}
+.file-upload-area:hover{background:var(--color-background-secondary)}
+.file-upload-area i{font-size:24px;color:var(--color-text-secondary);margin-bottom:6px;display:block}
+.file-upload-area p{font-size:13px;color:var(--color-text-secondary)}
+.attached-file{display:flex;align-items:center;gap:8px;background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:8px 12px;margin-top:8px;font-size:13px}
+.attached-file i{color:var(--color-text-secondary)}
+.search-bar{flex:1;max-width:280px;display:flex;align-items:center;gap:8px;background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:7px 12px}
+.search-bar i{color:var(--color-text-tertiary);font-size:15px}
+.search-bar input{border:none;background:none;font-size:13px;color:var(--color-text-primary);width:100%;font-family:var(--font-sans)}
+.search-bar input:focus{outline:none}
+.filter-bar{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+.filter-chip{padding:5px 12px;border-radius:20px;font-size:12px;border:0.5px solid var(--color-border-secondary);background:none;cursor:pointer;color:var(--color-text-secondary);font-family:var(--font-sans)}
+.filter-chip.active{background:var(--color-text-primary);color:var(--color-background-primary);border-color:var(--color-text-primary)}
+.empty-stage{font-size:12px;color:var(--color-text-tertiary);text-align:center;padding:8px 0}
+.view-link{color:#185FA5;cursor:pointer;font-size:13px;text-decoration:none}
+.view-link:hover{text-decoration:underline}
+</style>
+
+<h2 class="sr-only">Pinnacle Injury Consultants — Case Management Dashboard</h2>
+
+<div class="app">
+  <aside class="sidebar">
+    <div class="logo">
+      <div class="logo-title">PIC</div>
+      <div class="logo-sub">Case Management</div>
+    </div>
+    <nav class="nav">
+      <div class="nav-label">Main</div>
+      <button class="nav-item active" onclick="showView('dashboard')"><i class="ti ti-layout-dashboard" aria-hidden="true"></i> Dashboard</button>
+      <button class="nav-item" onclick="showView('pipeline')"><i class="ti ti-layout-kanban" aria-hidden="true"></i> Pipeline <span class="badge" id="pipeline-badge">0</span></button>
+      <button class="nav-item" onclick="showView('cases')"><i class="ti ti-users" aria-hidden="true"></i> All Cases</button>
+      <div class="nav-label">Management</div>
+      <button class="nav-item" onclick="showView('intakes')"><i class="ti ti-clipboard-list" aria-hidden="true"></i> Intakes</button>
+      <button class="nav-item" onclick="showView('contracts')"><i class="ti ti-file-description" aria-hidden="true"></i> Contracts</button>
+      <button class="nav-item" onclick="showView('settlements')"><i class="ti ti-coin" aria-hidden="true"></i> Settlements</button>
+    </nav>
+  </aside>
+
+  <div class="main">
+    <div class="topbar">
+      <span class="topbar-title" id="view-title">Dashboard</span>
+      <div class="search-bar">
+        <i class="ti ti-search" aria-hidden="true"></i>
+        <input type="text" placeholder="Search cases..." id="search-input" oninput="filterCases()" />
+      </div>
+      <button class="btn btn-primary" onclick="openNewCaseModal()"><i class="ti ti-plus" aria-hidden="true"></i> New Case</button>
+    </div>
+
+    <div class="content" id="main-content"></div>
+  </div>
+</div>
+
+<!-- New Case Modal -->
+<div class="modal-bg" id="new-case-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title">Add New Case</span>
+      <button class="btn" onclick="closeModal('new-case-modal')"><i class="ti ti-x" aria-hidden="true"></i></button>
+    </div>
+    <div class="modal-body">
+      <div class="field-row">
+        <div class="field"><label>First name</label><input id="nc-first" type="text" placeholder="Maria" /></div>
+        <div class="field"><label>Last name</label><input id="nc-last" type="text" placeholder="Santos" /></div>
+      </div>
+      <div class="field-row">
+        <div class="field"><label>Phone</label><input id="nc-phone" type="tel" placeholder="(713) 555-0100" /></div>
+        <div class="field"><label>Email</label><input id="nc-email" type="email" placeholder="maria@email.com" /></div>
+      </div>
+      <div class="field-row">
+        <div class="field"><label>Case type</label>
+          <select id="nc-type">
+            <option value="Auto Accident">Auto Accident</option>
+            <option value="Slip & Fall">Slip & Fall</option>
+            <option value="Workplace Injury">Workplace Injury</option>
+            <option value="Medical Malpractice">Medical Malpractice</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+        <div class="field"><label>Lead source</label>
+          <select id="nc-source">
+            <option value="Website">Website</option>
+            <option value="Digital Ad">Digital Ad</option>
+            <option value="Referral">Referral</option>
+            <option value="Walk-in">Walk-in</option>
+            <option value="Social Media">Social Media</option>
+          </select>
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field"><label>Incident date</label><input id="nc-date" type="date" /></div>
+        <div class="field"><label>Assigned intake specialist</label>
+          <select id="nc-specialist">
+            <option value="Jordan Lee">Jordan Lee</option>
+            <option value="Priya Nair">Priya Nair</option>
+            <option value="Marcus Hill">Marcus Hill</option>
+            <option value="Unassigned">Unassigned</option>
+          </select>
+        </div>
+      </div>
+      <div class="field"><label>Case notes</label><textarea id="nc-notes" placeholder="Brief description of incident..."></textarea></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModal('new-case-modal')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveNewCase()">Create case</button>
+    </div>
+  </div>
+</div>
+
+<!-- Case Detail Modal -->
+<div class="modal-bg" id="case-detail-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title" id="detail-modal-title">Case Detail</span>
+      <button class="btn" onclick="closeModal('case-detail-modal')"><i class="ti ti-x" aria-hidden="true"></i></button>
+    </div>
+    <div class="modal-body" id="case-detail-body"></div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModal('case-detail-modal')">Close</button>
+      <button class="btn btn-primary" id="advance-btn" onclick="advanceCase()">Advance stage</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const STAGES = ['Lead','Intake Completed','Case Signed','Settlement Closed'];
+const STAGE_KEYS = ['lead','intake','signed','settlement'];
+const TYPE_CLASS = {'Auto Accident':'type-auto','Slip & Fall':'type-slip','Workplace Injury':'type-work','Medical Malpractice':'type-medical','Other':'type-other'};
+const PILL_CLASS = {'Lead':'pill-lead','Intake Completed':'pill-intake','Case Signed':'pill-signed','Settlement Closed':'pill-settlement'};
+
+let cases = [];
+let activeCaseId = null;
+let currentView = 'dashboard';
+let activeFilter = 'All';
+
+async function loadCases(){
+  try{
+    const r = await window.storage.get('pic-cases');
+    if(r && r.value) cases = JSON.parse(r.value);
+  }catch(e){cases=[];}
+  if(cases.length===0) seedData();
+  render();
+}
+
+async function saveCases(){
+  try{ await window.storage.set('pic-cases', JSON.stringify(cases)); }catch(e){}
+}
+
+function seedData(){
+  const now = Date.now();
+  cases = [
+    {id:1,first:'Diana',last:'Torres',phone:'(713)555-0141',email:'diana@email.com',type:'Auto Accident',source:'Digital Ad',stage:'Lead',specialist:'Jordan Lee',notes:'Rear-end collision on I-45.',date:'2026-04-28',created:now-86400000*5,history:['2026-04-28: Lead created'],contract:null},
+    {id:2,first:'Marcus',last:'Webb',phone:'(832)555-0198',email:'marcus@email.com',type:'Slip & Fall',source:'Website',stage:'Intake Completed',specialist:'Priya Nair',notes:'Fell at retail store, knee injury.',date:'2026-04-10',created:now-86400000*12,history:['2026-04-10: Lead created','2026-04-15: Intake completed'],contract:null},
+    {id:3,first:'Elena',last:'Kim',phone:'(281)555-0067',email:'elena@email.com',type:'Workplace Injury',source:'Referral',stage:'Case Signed',specialist:'Marcus Hill',notes:'Back injury from warehouse lift.',date:'2026-03-22',created:now-86400000*25,history:['2026-03-22: Lead created','2026-03-28: Intake completed','2026-04-02: Case signed'],contract:'Engagement_Contract_Kim.pdf'},
+    {id:4,first:'James',last:'Okonkwo',phone:'(713)555-0212',email:'james@email.com',type:'Auto Accident',source:'Walk-in',stage:'Settlement Closed',specialist:'Jordan Lee',notes:'T-bone collision, shoulder surgery.',date:'2025-12-01',created:now-86400000*60,history:['2025-12-01: Lead created','2025-12-08: Intake completed','2025-12-15: Case signed','2026-02-20: Settlement closed'],contract:'Engagement_Contract_Okonkwo.pdf'},
+    {id:5,first:'Sofia',last:'Reyes',phone:'(832)555-0155',email:'sofia@email.com',type:'Medical Malpractice',source:'Social Media',stage:'Lead',specialist:'Priya Nair',notes:'Post-op complications at clinic.',date:'2026-05-01',created:now-86400000*2,history:['2026-05-01: Lead created'],contract:null},
+  ];
+  saveCases();
+}
+
+function nextId(){return cases.length ? Math.max(...cases.map(c=>c.id))+1 : 1;}
+
+function render(){
+  document.getElementById('pipeline-badge').textContent = cases.filter(c=>c.stage!=='Settlement Closed').length;
+  const v = currentView;
+  document.querySelectorAll('.nav-item').forEach(el=>el.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(el=>{if(el.getAttribute('onclick')&&el.getAttribute('onclick').includes("'"+v+"'"))el.classList.add('active');});
+  const titles = {dashboard:'Dashboard',pipeline:'Pipeline',cases:'All Cases',intakes:'Intakes',contracts:'Contracts',settlements:'Settlements'};
+  document.getElementById('view-title').textContent = titles[v]||'Dashboard';
+  const c = document.getElementById('main-content');
+  if(v==='dashboard') c.innerHTML = renderDashboard();
+  else if(v==='pipeline') c.innerHTML = renderPipeline();
+  else if(v==='cases') c.innerHTML = renderCaseTable('All');
+  else if(v==='intakes') c.innerHTML = renderCaseTable('Intake Completed');
+  else if(v==='contracts') c.innerHTML = renderCaseTable('Case Signed');
+  else if(v==='settlements') c.innerHTML = renderCaseTable('Settlement Closed');
+}
+
+function renderDashboard(){
+  const total = cases.length;
+  const leads = cases.filter(c=>c.stage==='Lead').length;
+  const signed = cases.filter(c=>c.stage==='Case Signed').length;
+  const settled = cases.filter(c=>c.stage==='Settlement Closed').length;
+  const recent = [...cases].sort((a,b)=>b.created-a.created).slice(0,5);
+  return `
+  <div class="metrics">
+    <div class="metric"><div class="metric-label">Total cases</div><div class="metric-value">${total}</div><div class="metric-sub">All time</div></div>
+    <div class="metric"><div class="metric-label">Active leads</div><div class="metric-value">${leads}</div><div class="metric-sub">Needs intake</div></div>
+    <div class="metric"><div class="metric-label">Cases signed</div><div class="metric-value">${signed}</div><div class="metric-sub">Pending settlement</div></div>
+    <div class="metric"><div class="metric-label">Settlements closed</div><div class="metric-value">${settled}</div><div class="metric-sub">Completed</div></div>
+  </div>
+  <div class="section-title">Recent cases</div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Client</th><th>Type</th><th>Stage</th><th>Specialist</th><th>Created</th><th></th></tr></thead>
+      <tbody>
+        ${recent.map(c=>`<tr>
+          <td><strong>${c.first} ${c.last}</strong><br><span style="font-size:12px;color:var(--color-text-secondary)">${c.phone}</span></td>
+          <td><span class="case-type ${TYPE_CLASS[c.type]||'type-other'}">${c.type}</span></td>
+          <td><span class="status-pill ${PILL_CLASS[c.stage]||'pill-lead'}"><span class="pill-dot"></span>${c.stage}</span></td>
+          <td style="font-size:13px">${c.specialist}</td>
+          <td style="font-size:12px;color:var(--color-text-secondary)">${new Date(c.created).toLocaleDateString()}</td>
+          <td><a class="view-link" onclick="openCaseDetail(${c.id})">View</a></td>
+        </tr>`).join('')}
+      </tbody>
+    </table>
+  </div>`;
+}
+
+function renderPipeline(){
+  return `<div class="pipeline">
+    ${STAGES.map((stage,i)=>{
+      const stageCases = cases.filter(c=>c.stage===stage);
+      const key = STAGE_KEYS[i];
+      return `<div class="stage stage-${key}">
+        <div class="stage-header">
+          <span class="stage-name">${stage}</span>
+          <span class="stage-count">${stageCases.length}</span>
+        </div>
+        ${stageCases.length===0?'<div class="empty-stage">No cases</div>':
+          stageCases.map(c=>`<div class="case-card" onclick="openCaseDetail(${c.id})">
+            <div class="case-name">${c.first} ${c.last}</div>
+            <div class="case-meta">${c.specialist}</div>
+            <span class="case-type ${TYPE_CLASS[c.type]||'type-other'}">${c.type}</span>
+          </div>`).join('')}
+      </div>`;
+    }).join('')}
+  </div>`;
+}
+
+function renderCaseTable(stageFilter){
+  const q = (document.getElementById('search-input')||{}).value||'';
+  let filtered = cases.filter(c=>{
+    const matchStage = stageFilter==='All' || c.stage===stageFilter;
+    const matchFilter = activeFilter==='All' || c.stage===activeFilter;
+    const matchQ = !q || (c.first+' '+c.last+c.type+c.specialist).toLowerCase().includes(q.toLowerCase());
+    return matchStage && matchFilter && matchQ;
+  });
+  const chips = stageFilter==='All'?`<div class="filter-bar">
+    ${['All',...STAGES].map(s=>`<button class="filter-chip ${activeFilter===s?'active':''}" onclick="setFilter('${s}')">${s}</button>`).join('')}
+  </div>`:'';
+  return `${chips}<div class="table-wrap">
+    <table>
+      <thead><tr><th>Client</th><th>Type</th><th>Source</th><th>Stage</th><th>Specialist</th><th>Incident date</th><th>Contract</th><th></th></tr></thead>
+      <tbody>${filtered.length===0?`<tr><td colspan="8" style="text-align:center;color:var(--color-text-tertiary);padding:24px">No cases found</td></tr>`:
+        filtered.map(c=>`<tr>
+          <td><strong>${c.first} ${c.last}</strong><br><span style="font-size:12px;color:var(--color-text-secondary)">${c.email}</span></td>
+          <td><span class="case-type ${TYPE_CLASS[c.type]||'type-other'}">${c.type}</span></td>
+          <td style="font-size:13px;color:var(--color-text-secondary)">${c.source}</td>
+          <td><span class="status-pill ${PILL_CLASS[c.stage]||'pill-lead'}"><span class="pill-dot"></span>${c.stage}</span></td>
+          <td style="font-size:13px">${c.specialist}</td>
+          <td style="font-size:12px;color:var(--color-text-secondary)">${c.date||'—'}</td>
+          <td style="font-size:12px">${c.contract?`<span style="color:var(--color-text-success)"><i class="ti ti-file-check" aria-hidden="true"></i> Attached</span>`:'<span style="color:var(--color-text-tertiary)">—</span>'}</td>
+          <td><a class="view-link" onclick="openCaseDetail(${c.id})">View</a></td>
+        </tr>`).join('')}
+      </tbody>
+    </table>
+  </div>`;
+}
+
+function setFilter(f){activeFilter=f;render();}
+function filterCases(){render();}
+
+function showView(v){currentView=v;activeFilter='All';render();}
+
+function openNewCaseModal(){
+  document.getElementById('new-case-modal').classList.add('open');
+}
+
+function closeModal(id){document.getElementById(id).classList.remove('open');}
+
+function saveNewCase(){
+  const first = document.getElementById('nc-first').value.trim();
+  const last = document.getElementById('nc-last').value.trim();
+  if(!first||!last){alert('Please enter client name.');return;}
+  const c = {
+    id:nextId(),first,last,
+    phone:document.getElementById('nc-phone').value,
+    email:document.getElementById('nc-email').value,
+    type:document.getElementById('nc-type').value,
+    source:document.getElementById('nc-source').value,
+    stage:'Lead',
+    specialist:document.getElementById('nc-specialist').value,
+    notes:document.getElementById('nc-notes').value,
+    date:document.getElementById('nc-date').value,
+    created:Date.now(),
+    history:[new Date().toISOString().split('T')[0]+': Lead created'],
+    contract:null
+  };
+  cases.unshift(c);
+  saveCases();
+  closeModal('new-case-modal');
+  ['nc-first','nc-last','nc-phone','nc-email','nc-notes','nc-date'].forEach(id=>document.getElementById(id).value='');
+  render();
+}
+
+function openCaseDetail(id){
+  activeCaseId = id;
+  const c = cases.find(x=>x.id===id);
+  if(!c) return;
+  document.getElementById('detail-modal-title').textContent = c.first+' '+c.last;
+  const stageIdx = STAGES.indexOf(c.stage);
+  const canAdvance = stageIdx < STAGES.length-1;
+  document.getElementById('advance-btn').style.display = canAdvance?'':'none';
+  if(canAdvance) document.getElementById('advance-btn').textContent = 'Advance to: '+STAGES[stageIdx+1];
+  document.getElementById('case-detail-body').innerHTML = `
+    <div class="detail-section">
+      <h3>Client information</h3>
+      <div class="detail-grid">
+        <div class="detail-item"><div class="di-label">Name</div><div class="di-value">${c.first} ${c.last}</div></div>
+        <div class="detail-item"><div class="di-label">Phone</div><div class="di-value">${c.phone||'—'}</div></div>
+        <div class="detail-item"><div class="di-label">Email</div><div class="di-value">${c.email||'—'}</div></div>
+        <div class="detail-item"><div class="di-label">Incident date</div><div class="di-value">${c.date||'—'}</div></div>
+        <div class="detail-item"><div class="di-label">Case type</div><div class="di-value">${c.type}</div></div>
+        <div class="detail-item"><div class="di-label">Lead source</div><div class="di-value">${c.source}</div></div>
+        <div class="detail-item"><div class="di-label">Specialist</div><div class="di-value">${c.specialist}</div></div>
+        <div class="detail-item"><div class="di-label">Current stage</div><div class="di-value"><span class="status-pill ${PILL_CLASS[c.stage]||'pill-lead'}"><span class="pill-dot"></span>${c.stage}</span></div></div>
+      </div>
+    </div>
+    ${c.notes?`<div class="detail-section"><h3>Case notes</h3><p style="font-size:13px;color:var(--color-text-secondary);line-height:1.6">${c.notes}</p></div>`:''}
+    <div class="detail-section">
+      <h3>Case timeline</h3>
+      <div class="timeline">
+        ${c.history.map((h,i)=>`<div class="tl-item"><div class="tl-dot ${i===c.history.length-1?'active':''}"></div><div class="tl-text">${h}</div></div>`).join('')}
+      </div>
+    </div>
+    <div class="detail-section">
+      <h3>Engagement contract</h3>
+      ${c.contract
+        ? `<div class="attached-file"><i class="ti ti-file-description" aria-hidden="true"></i> ${c.contract} <span style="margin-left:auto;font-size:12px;color:var(--color-text-success)">Attached</span></div>`
+        : `<div class="file-upload-area" onclick="attachContract(${c.id})"><i class="ti ti-upload" aria-hidden="true"></i><p>Click to attach engagement contract</p><p style="font-size:11px;margin-top:4px">PDF, DOC</p></div>`
+      }
+    </div>
+  `;
+  document.getElementById('case-detail-modal').classList.add('open');
+}
+
+function attachContract(id){
+  const c = cases.find(x=>x.id===id);
+  if(!c) return;
+  const name = prompt('Enter contract filename (e.g. Engagement_Contract_Smith.pdf):');
+  if(!name) return;
+  c.contract = name;
+  if(!c.history.includes(new Date().toISOString().split('T')[0]+': Engagement contract attached'))
+    c.history.push(new Date().toISOString().split('T')[0]+': Engagement contract attached');
+  saveCases();
+  openCaseDetail(id);
+}
+
+function advanceCase(){
+  const c = cases.find(x=>x.id===activeCaseId);
+  if(!c) return;
+  const idx = STAGES.indexOf(c.stage);
+  if(idx<STAGES.length-1){
+    c.stage = STAGES[idx+1];
+    c.history.push(new Date().toISOString().split('T')[0]+': Stage advanced to '+c.stage);
+    saveCases();
+    render();
+    openCaseDetail(activeCaseId);
+  }
+}
+
+loadCases();
+</script>
