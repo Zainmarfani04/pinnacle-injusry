@@ -1,0 +1,1241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Pinnacle Injury Consultants — Case Management</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ink:#0a0c10;--ink2:#161b25;--ink3:#1e2535;--ink4:#252d3d;
+  --sur:rgba(255,255,255,.04);--sur2:rgba(255,255,255,.07);--sur3:rgba(255,255,255,.11);
+  --bd:rgba(255,255,255,.07);--bd2:rgba(255,255,255,.13);--bd3:rgba(255,255,255,.22);
+  --tx:#f0f2f7;--tx2:#8d95a8;--tx3:#4e5668;
+  --gold:#c9a84c;--gold2:#e8c76a;--gd:rgba(201,168,76,.12);--gg:rgba(201,168,76,.07);
+  --lead:#4f8ef7;--intake:#f5a623;--signed:#9b72f5;--settled:#34c77b;
+  --accepted:#34c77b;--rejected:#e05c5c;--pending-atty:#8b5cf6;
+  --danger:#e05c5c;--warn:#f5a623;
+  --head:'Syne',sans-serif;--body:'DM Sans',sans-serif;
+  --r:8px;--rl:14px;
+}
+html,body{height:100%;background:var(--ink);color:var(--tx);font-family:var(--body);font-size:14px;line-height:1.5;overflow:hidden}
+.screen{display:none;width:100%;height:100vh}.screen.active{display:flex}
+
+/* ── AUTH ── */
+#auth-screen{align-items:stretch}
+.auth-brand{width:400px;min-width:400px;background:var(--ink2);border-right:1px solid var(--bd);display:flex;flex-direction:column;padding:48px;position:relative;overflow:hidden}
+.auth-brand::before{content:'';position:absolute;top:-100px;left:-100px;width:380px;height:380px;background:radial-gradient(circle,rgba(201,168,76,.10) 0%,transparent 70%);pointer-events:none}
+.brand-logo{display:flex;align-items:center;gap:14px;margin-bottom:auto}
+.brand-mark{width:44px;height:44px;border-radius:10px;background:linear-gradient(135deg,var(--gold),var(--gold2));display:flex;align-items:center;justify-content:center;font-family:var(--head);font-size:18px;font-weight:700;color:var(--ink);flex-shrink:0}
+.brand-name{font-family:var(--head);font-size:15px;font-weight:600;letter-spacing:.02em;line-height:1.3}
+.brand-name span{display:block;font-size:11px;font-weight:400;color:var(--tx2);letter-spacing:.04em;margin-top:1px}
+.brand-hero{margin-top:auto;padding-top:40px}
+.brand-tagline{font-family:var(--head);font-size:30px;font-weight:700;line-height:1.15;letter-spacing:-.01em;margin-bottom:14px}
+.brand-tagline em{font-style:normal;color:var(--gold)}
+.brand-desc{font-size:13px;color:var(--tx2);line-height:1.7;margin-bottom:28px}
+.brand-stats{display:flex;gap:24px}
+.bsv{font-family:var(--head);font-size:20px;font-weight:700;color:var(--gold)}
+.bsl{font-size:11px;color:var(--tx3);text-transform:uppercase;letter-spacing:.06em}
+.auth-form-panel{flex:1;display:flex;align-items:center;justify-content:center;padding:48px}
+.auth-card{width:100%;max-width:400px}
+.auth-title{font-family:var(--head);font-size:26px;font-weight:700;margin-bottom:6px;letter-spacing:-.01em}
+.auth-sub{font-size:13px;color:var(--tx2);margin-bottom:32px}
+.form-field{margin-bottom:16px}
+.form-field label{display:block;font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:.07em;color:var(--tx2);margin-bottom:6px}
+.iw{position:relative}
+.iw i{position:absolute;left:13px;top:50%;transform:translateY(-50%);font-size:13px;color:var(--tx3);pointer-events:none}
+.fi{width:100%;padding:11px 13px 11px 38px;border-radius:var(--r);border:1px solid var(--bd2);background:var(--sur);color:var(--tx);font-size:13px;font-family:var(--body);outline:none;transition:border-color .2s}
+.fi:focus{border-color:var(--gold)}.fi::placeholder{color:var(--tx3)}
+.demo-box{background:var(--sur);border:1px solid var(--bd);border-radius:var(--r);padding:13px 15px;margin-bottom:18px}
+.demo-box p{font-size:10px;color:var(--tx3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:9px}
+.demo-row{display:flex;align-items:center;justify-content:space-between;padding:5px 6px;border-radius:6px;cursor:pointer;transition:background .15s;border-bottom:1px solid var(--bd)}
+.demo-row:last-child{border-bottom:none}.demo-row:hover{background:var(--sur2)}
+.drole{font-size:11px;font-weight:500;padding:2px 8px;border-radius:20px}
+.r-admin{background:rgba(201,168,76,.15);color:var(--gold2)}
+.r-spec{background:rgba(79,142,247,.15);color:#7eb3ff}
+.r-lawyer{background:rgba(52,199,123,.15);color:#5ddda0}
+.dcreds{font-size:11px;color:var(--tx3);font-family:monospace}
+.btn-login{width:100%;padding:12px;border-radius:var(--r);border:none;cursor:pointer;font-family:var(--head);font-size:14px;font-weight:600;letter-spacing:.03em;background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--ink);transition:opacity .2s,transform .1s;margin-bottom:14px}
+.btn-login:hover{opacity:.9}.btn-login:active{transform:scale(.98)}
+.auth-err{background:rgba(224,92,92,.1);border:1px solid rgba(224,92,92,.3);border-radius:var(--r);padding:10px 14px;font-size:13px;color:#f08080;margin-bottom:14px;display:none}
+.auth-err.show{display:block}
+
+/* ── APP LAYOUT ── */
+#app-screen{flex-direction:row;overflow:hidden}
+.sidebar{width:240px;min-width:240px;background:var(--ink2);border-right:1px solid var(--bd);display:flex;flex-direction:column;overflow-y:auto}
+.sb-hd{padding:18px;border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:11px}
+.sb-mark{width:32px;height:32px;border-radius:7px;background:linear-gradient(135deg,var(--gold),var(--gold2));display:flex;align-items:center;justify-content:center;font-family:var(--head);font-size:13px;font-weight:700;color:var(--ink);flex-shrink:0}
+.sb-title{font-family:var(--head);font-size:13px;font-weight:600}
+.sb-role{font-size:10px;color:var(--tx3);margin-top:1px;text-transform:uppercase;letter-spacing:.06em}
+.sb-nav{padding:10px;flex:1}
+.sb-sec{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--tx3);padding:10px 8px 5px}
+.sb-item{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:var(--r);font-size:13px;color:var(--tx2);cursor:pointer;border:none;background:none;width:100%;text-align:left;margin-bottom:1px;transition:background .15s,color .15s;font-family:var(--body)}
+.sb-item:hover{background:var(--sur2);color:var(--tx)}
+.sb-item.active{background:var(--gd);color:var(--gold2);font-weight:500}
+.sb-item.active i{color:var(--gold)}
+.sb-item i{font-size:13px;width:16px;text-align:center;color:var(--tx3)}
+.sb-badge{margin-left:auto;font-size:10px;font-weight:600;padding:1px 7px;border-radius:20px}
+.sb-badge.blue{background:rgba(79,142,247,.18);color:#7eb3ff}
+.sb-badge.gold{background:rgba(201,168,76,.18);color:var(--gold2)}
+.sb-badge.red{background:rgba(224,92,92,.18);color:#f08080}
+.sb-badge.green{background:rgba(52,199,123,.18);color:#5ddda0}
+.sb-ft{padding:12px 14px;border-top:1px solid var(--bd)}
+.sb-user{display:flex;align-items:center;gap:9px;padding:7px 8px;border-radius:var(--r);cursor:pointer;transition:background .15s}
+.sb-user:hover{background:var(--sur2)}
+.sb-av{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold2));display:flex;align-items:center;justify-content:center;font-family:var(--head);font-size:11px;font-weight:700;color:var(--ink);flex-shrink:0}
+.sb-un{font-size:12px;font-weight:500}.sb-ue{font-size:11px;color:var(--tx3);margin-top:1px}
+.sb-lo{margin-left:auto;font-size:13px;color:var(--tx3);background:none;border:none;cursor:pointer;transition:color .15s;padding:4px}
+.sb-lo:hover{color:var(--danger)}
+.app-main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.topbar{background:var(--ink2);border-bottom:1px solid var(--bd);padding:0 24px;height:56px;display:flex;align-items:center;gap:12px;flex-shrink:0}
+.topbar-title{font-family:var(--head);font-size:16px;font-weight:600;flex:1;letter-spacing:-.01em}
+.srch{display:flex;align-items:center;gap:8px;background:var(--sur);border:1px solid var(--bd);border-radius:var(--r);padding:7px 12px;width:220px;transition:border-color .2s}
+.srch:focus-within{border-color:var(--gold)}
+.srch i{color:var(--tx3);font-size:13px}
+.srch input{border:none;background:none;color:var(--tx);font-size:13px;font-family:var(--body);width:100%;outline:none}
+.srch input::placeholder{color:var(--tx3)}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:var(--r);border:1px solid var(--bd2);background:var(--sur);color:var(--tx);font-size:13px;font-family:var(--body);cursor:pointer;transition:background .15s;white-space:nowrap}
+.btn:hover{background:var(--sur3)}.btn i{font-size:12px}
+.btn-gold{background:linear-gradient(135deg,var(--gold),var(--gold2));border-color:transparent;color:var(--ink);font-weight:500}
+.btn-gold:hover{opacity:.9;background:linear-gradient(135deg,var(--gold),var(--gold2))}
+.btn-sm{padding:5px 10px;font-size:12px}
+.btn-success{background:rgba(52,199,123,.15);border-color:rgba(52,199,123,.3);color:#5ddda0}
+.btn-success:hover{background:rgba(52,199,123,.25)}
+.btn-danger{background:rgba(224,92,92,.12);border-color:rgba(224,92,92,.3);color:#f08080}
+.btn-danger:hover{background:rgba(224,92,92,.2)}
+.content{flex:1;overflow-y:auto;padding:24px}
+
+/* ── METRICS ── */
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+.metric{background:var(--ink2);border:1px solid var(--bd);border-radius:var(--rl);padding:16px 18px;position:relative;overflow:hidden}
+.metric::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--mc,var(--gold));opacity:.6}
+.metric-label{font-size:11px;color:var(--tx3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px}
+.metric-value{font-size:26px;font-weight:600;font-family:var(--head);line-height:1;margin-bottom:3px}
+.metric-sub{font-size:12px;color:var(--tx3)}
+.metric-icon{position:absolute;right:14px;top:50%;transform:translateY(-50%);font-size:26px;opacity:.06}
+
+/* ── TABLE ── */
+.tc{background:var(--ink2);border:1px solid var(--bd);border-radius:var(--rl);overflow:hidden;margin-bottom:16px}
+table{width:100%;border-collapse:collapse}
+thead th{text-align:left;padding:10px 18px;font-size:10px;text-transform:uppercase;letter-spacing:.07em;color:var(--tx3);font-weight:600;background:rgba(255,255,255,.02);border-bottom:1px solid var(--bd)}
+tbody td{padding:12px 18px;border-bottom:1px solid var(--bd);vertical-align:middle}
+tbody tr:last-child td{border-bottom:none}
+tbody tr:hover{background:var(--sur)}
+.tdp{font-weight:500;font-size:13px}.tds{font-size:12px;color:var(--tx3);margin-top:2px}
+
+/* ── PILLS & BADGES ── */
+.pill{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:500;padding:3px 9px;border-radius:20px;white-space:nowrap}
+.pdot{width:5px;height:5px;border-radius:50%;background:currentColor;flex-shrink:0}
+.p-lead{background:rgba(79,142,247,.14);color:#7eb3ff}
+.p-intake{background:rgba(245,166,35,.14);color:#f5a623}
+.p-sent{background:rgba(139,92,246,.14);color:#c4b5fd}
+.p-accepted{background:rgba(52,199,123,.18);color:#5ddda0}
+.p-rejected{background:rgba(224,92,92,.14);color:#f08080}
+.p-signed{background:rgba(155,114,245,.18);color:#b494ff}
+.p-settled{background:rgba(52,199,123,.18);color:#5ddda0}
+.p-admin{background:rgba(201,168,76,.14);color:var(--gold2)}
+.p-spec{background:rgba(79,142,247,.14);color:#7eb3ff}
+.p-lawyer{background:rgba(52,199,123,.14);color:#5ddda0}
+.tbadge{display:inline-block;font-size:11px;font-weight:500;padding:3px 8px;border-radius:6px}
+.t-auto{background:rgba(79,142,247,.12);color:#7eb3ff}
+.t-slip{background:rgba(245,166,35,.12);color:#f5a623}
+.t-work{background:rgba(155,114,245,.12);color:#b494ff}
+.t-med{background:rgba(52,199,123,.12);color:#5ddda0}
+.t-other{background:var(--sur2);color:var(--tx2)}
+.ab{font-size:12px;color:var(--gold);cursor:pointer;background:none;border:none;font-family:var(--body);padding:4px 8px;border-radius:6px;transition:background .15s}
+.ab:hover{background:var(--gd)}
+.ntag{display:inline-flex;align-items:center;gap:3px;font-size:10px;font-weight:600;background:rgba(79,142,247,.16);color:#7eb3ff;padding:1px 6px;border-radius:20px;margin-left:5px}
+.stale-tag{background:rgba(245,166,35,.15);color:var(--warn);font-size:10px;font-weight:600;padding:1px 6px;border-radius:20px;margin-left:4px}
+
+/* ── FILTER ── */
+.fb{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap}
+.chip{padding:5px 12px;border-radius:20px;font-size:12px;border:1px solid var(--bd);background:none;cursor:pointer;color:var(--tx2);font-family:var(--body);transition:all .15s}
+.chip:hover{background:var(--sur2);color:var(--tx)}
+.chip.active{background:var(--gd);border-color:rgba(201,168,76,.3);color:var(--gold2);font-weight:500}
+
+/* ── PIPELINE ── */
+.pipeline{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+.sc{background:var(--ink2);border:1px solid var(--bd);border-radius:var(--rl);padding:13px;min-height:280px}
+.sch{display:flex;align-items:center;justify-content:space-between;margin-bottom:9px;padding-bottom:9px;border-bottom:1px solid var(--bd)}
+.scl{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--tx3)}
+.scc{font-size:11px;font-weight:600;padding:2px 7px;border-radius:20px;background:var(--sur);color:var(--tx2)}
+.sbar{height:2px;border-radius:2px;margin-bottom:9px}
+.kc{background:var(--sur);border:1px solid var(--bd);border-radius:var(--r);padding:10px 11px;margin-bottom:7px;cursor:pointer;transition:border-color .15s,transform .15s}
+.kc:hover{border-color:var(--bd3);transform:translateY(-1px)}
+.kn{font-size:12px;font-weight:500;margin-bottom:2px}
+.km{font-size:11px;color:var(--tx3);margin-bottom:5px}
+.emc{font-size:12px;color:var(--tx3);text-align:center;padding:16px 0}
+
+/* ── ANALYTICS ── */
+.ag{display:grid;grid-template-columns:2fr 1fr;gap:14px;margin-bottom:14px}
+.ag3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:14px}
+.cc{background:var(--ink2);border:1px solid var(--bd);border-radius:var(--rl);padding:18px}
+.ct{font-family:var(--head);font-size:13px;font-weight:600;margin-bottom:3px}
+.cs{font-size:11px;color:var(--tx3);margin-bottom:14px}
+.bc{display:flex;align-items:flex-end;gap:5px;height:100px;margin-bottom:7px}
+.bg{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px}
+.bw{width:100%;display:flex;align-items:flex-end;gap:2px;height:88px}
+.bar{flex:1;border-radius:3px 3px 0 0;min-height:4px;cursor:pointer;transition:opacity .2s}
+.bar:hover{opacity:.75}
+.bl{font-size:10px;color:var(--tx3);text-align:center}
+.leg{display:flex;gap:12px;margin-top:4px}
+.li{display:flex;align-items:center;gap:4px;font-size:11px;color:var(--tx3)}
+.ld{width:8px;height:8px;border-radius:2px}
+.dl-item{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--tx2);margin-bottom:7px}
+.dl-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.dl-v{margin-left:auto;font-weight:500;color:var(--tx)}
+.lrow{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--bd)}
+.lrow:last-child{border-bottom:none}
+.lav{width:30px;height:30px;border-radius:50%;background:var(--gd);border:1px solid rgba(201,168,76,.2);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;color:var(--gold2);flex-shrink:0}
+.lnm{font-size:12px;font-weight:500;flex:1}
+.lbw{width:70px;height:5px;background:var(--sur2);border-radius:3px;overflow:hidden}
+.lb{height:100%;border-radius:3px;background:var(--gold)}
+
+/* ── AUTOMATIONS ── */
+.acard{background:var(--ink2);border:1px solid var(--bd);border-radius:var(--rl);padding:17px 19px;display:flex;align-items:flex-start;gap:15px;margin-bottom:10px}
+.acard.disabled{opacity:.55}
+.aicon{width:37px;height:37px;border-radius:9px;background:var(--sur2);display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+.abody{flex:1}
+.aname{font-family:var(--head);font-size:13px;font-weight:600;margin-bottom:3px}
+.adesc{font-size:12px;color:var(--tx2);line-height:1.6;margin-bottom:8px}
+.arule{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.rpart{display:flex;align-items:center;gap:5px;background:var(--sur2);border:1px solid var(--bd);border-radius:6px;padding:4px 10px;font-size:12px;color:var(--tx2)}
+.rpart i{font-size:11px;color:var(--tx3)}
+.atog{flex-shrink:0;margin-left:auto}
+.tog{position:relative;width:36px;height:20px;cursor:pointer;display:inline-block}
+.tog input{opacity:0;width:0;height:0}
+.tog-track{position:absolute;inset:0;border-radius:10px;background:var(--sur2);border:1px solid var(--bd2);transition:background .2s}
+.tog input:checked+.tog-track{background:rgba(201,168,76,.28);border-color:rgba(201,168,76,.5)}
+.tog-thumb{position:absolute;top:3px;left:3px;width:14px;height:14px;border-radius:50%;background:var(--tx3);transition:transform .2s,background .2s;pointer-events:none}
+.tog input:checked~.tog-thumb{transform:translateX(16px);background:var(--gold)}
+
+/* ── USER MGMT ── */
+.alert-banner{background:rgba(245,166,35,.07);border:1px solid rgba(245,166,35,.2);border-radius:var(--r);padding:10px 14px;display:flex;align-items:center;gap:10px;font-size:13px;color:var(--tx2);margin-bottom:14px}
+.alert-banner i{color:var(--warn);flex-shrink:0}
+.alert-banner.danger{background:rgba(224,92,92,.07);border-color:rgba(224,92,92,.2)}
+.alert-banner.danger i{color:var(--danger)}
+.alert-banner.success{background:rgba(52,199,123,.07);border-color:rgba(52,199,123,.2)}
+.alert-banner.success i{color:var(--settled)}
+.pending-badge{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:600;background:rgba(224,92,92,.12);color:#f08080;padding:2px 7px;border-radius:20px}
+
+/* ── MODAL ── */
+.mo{display:none;position:fixed;inset:0;background:rgba(0,0,0,.68);z-index:300;align-items:flex-start;justify-content:center;padding:40px 20px;overflow-y:auto}
+.mo.open{display:flex}
+.modal{background:var(--ink2);border:1px solid var(--bd2);border-radius:var(--rl);width:100%;max-width:580px;animation:su .2s ease}
+.modal.wide{max-width:720px}
+@keyframes su{from{transform:translateY(16px);opacity:0}to{transform:translateY(0);opacity:1}}
+.mh{padding:18px 24px 14px;border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:var(--ink2);z-index:1;border-radius:var(--rl) var(--rl) 0 0}
+.mt{font-family:var(--head);font-size:15px;font-weight:600}
+.mc{width:28px;height:28px;border-radius:6px;border:1px solid var(--bd);background:none;color:var(--tx2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;transition:background .15s}
+.mc:hover{background:var(--sur2)}
+.mb{padding:20px 24px}
+.mf{padding:14px 24px;border-top:1px solid var(--bd);display:flex;justify-content:flex-end;gap:8px;position:sticky;bottom:0;background:var(--ink2);border-radius:0 0 var(--rl) var(--rl)}
+.fg{display:grid;grid-template-columns:1fr 1fr;gap:13px;margin-bottom:13px}
+.fg.full{grid-template-columns:1fr}
+.field{display:flex;flex-direction:column;gap:5px}
+.field label{font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:.06em;color:var(--tx3)}
+.field input,.field select,.field textarea{padding:9px 12px;border-radius:var(--r);border:1px solid var(--bd2);background:var(--sur);color:var(--tx);font-size:13px;font-family:var(--body);outline:none;transition:border-color .2s}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--gold)}
+.field select option{background:var(--ink3)}
+.field textarea{resize:vertical;min-height:68px}
+
+/* ── DETAIL PANEL (2-col) ── */
+.detail-layout{display:grid;grid-template-columns:1fr 340px;gap:20px}
+.dsec{margin-bottom:18px}
+.dsec h3{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--tx3);margin-bottom:9px;padding-bottom:6px;border-bottom:1px solid var(--bd)}
+.dgrid{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.di{background:var(--sur);border-radius:var(--r);padding:9px 11px}
+.dil{font-size:11px;color:var(--tx3);margin-bottom:2px}
+.div_{font-size:13px;font-weight:500}
+.tl{padding-left:16px;border-left:2px solid var(--bd2);margin-left:6px}
+.tli{position:relative;margin-bottom:10px}
+.tldot{width:8px;height:8px;border-radius:50%;background:var(--ink3);border:2px solid var(--bd2);position:absolute;left:-21px;top:4px}
+.tldot.on{background:var(--gold);border-color:var(--gold)}
+.tlt{font-size:12px;color:var(--tx2);line-height:1.5}
+
+/* ── COMMENTS ── */
+.comment-panel{display:flex;flex-direction:column;height:100%}
+.comment-list{flex:1;overflow-y:auto;max-height:360px;margin-bottom:12px;padding-right:4px}
+.comment-item{margin-bottom:12px;padding:10px 12px;background:var(--sur);border-radius:var(--r);border:1px solid var(--bd)}
+.comment-item.lawyer-comment{border-left:3px solid var(--settled);background:rgba(52,199,123,.04)}
+.comment-item.staff-comment{border-left:3px solid var(--gold);background:rgba(201,168,76,.04)}
+.ci-header{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.ci-av{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;flex-shrink:0}
+.ci-av.lawyer{background:rgba(52,199,123,.2);color:#5ddda0}
+.ci-av.staff{background:rgba(201,168,76,.18);color:var(--gold2)}
+.ci-av.admin{background:rgba(201,168,76,.25);color:var(--gold2)}
+.ci-name{font-size:12px;font-weight:500}
+.ci-role{font-size:10px;color:var(--tx3);padding:1px 6px;border-radius:10px;background:var(--sur2)}
+.ci-time{font-size:10px;color:var(--tx3);margin-left:auto}
+.ci-text{font-size:13px;color:var(--tx2);line-height:1.6}
+.comment-input-wrap{display:flex;flex-direction:column;gap:8px}
+.comment-input{width:100%;padding:9px 12px;border-radius:var(--r);border:1px solid var(--bd2);background:var(--sur);color:var(--tx);font-size:13px;font-family:var(--body);outline:none;resize:none;min-height:64px;transition:border-color .2s}
+.comment-input:focus{border-color:var(--gold)}
+.no-comments{font-size:12px;color:var(--tx3);text-align:center;padding:24px 0}
+
+/* ── CONTRACT UPLOAD ── */
+.cdrop{border:1.5px dashed var(--bd2);border-radius:var(--r);padding:18px;text-align:center;cursor:pointer;transition:border-color .15s}
+.cdrop:hover{border-color:var(--gold);background:var(--gg)}
+.cdrop i{font-size:20px;color:var(--tx3);margin-bottom:5px;display:block}
+.cdrop p{font-size:13px;color:var(--tx3)}
+.cfile{display:flex;align-items:center;gap:10px;background:var(--sur);border-radius:var(--r);padding:10px 12px;font-size:13px}
+.cfile i{color:var(--settled)}
+
+/* ── LAWYER ACTION BANNER ── */
+.action-banner{border-radius:var(--r);padding:14px 16px;margin-bottom:16px;border:1px solid}
+.action-banner.pending{background:rgba(139,92,246,.08);border-color:rgba(139,92,246,.25)}
+.action-banner.rejected{background:rgba(224,92,92,.08);border-color:rgba(224,92,92,.25)}
+.action-banner.accepted{background:rgba(52,199,123,.08);border-color:rgba(52,199,123,.25)}
+.ab-title{font-family:var(--head);font-size:13px;font-weight:600;margin-bottom:4px}
+.ab-desc{font-size:12px;color:var(--tx2);line-height:1.6;margin-bottom:10px}
+.ab-actions{display:flex;gap:8px}
+
+/* ── STATUS INDICATOR ── */
+.status-flow{display:flex;align-items:center;gap:0;margin-bottom:16px;overflow-x:auto;padding-bottom:4px}
+.sf-step{display:flex;align-items:center;gap:0;flex-shrink:0}
+.sf-dot{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;border:2px solid var(--bd2);background:var(--ink3);flex-shrink:0;position:relative}
+.sf-dot.done{background:var(--gold);border-color:var(--gold);color:var(--ink)}
+.sf-dot.active{background:var(--ink2);border-color:var(--gold);color:var(--gold)}
+.sf-dot.rejected-dot{background:rgba(224,92,92,.15);border-color:var(--danger);color:var(--danger)}
+.sf-label{font-size:10px;color:var(--tx3);text-align:center;margin-top:4px;max-width:60px;line-height:1.3}
+.sf-line{width:24px;height:2px;background:var(--bd2);flex-shrink:0}
+.sf-line.done{background:var(--gold);opacity:.5}
+.sf-col{display:flex;flex-direction:column;align-items:center}
+
+/* ── SH / SEC ── */
+.sh{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.st{font-family:var(--head);font-size:15px;font-weight:600;letter-spacing:-.01em}
+.divider{height:1px;background:var(--bd);margin:14px 0}
+.empty-row td{text-align:center;color:var(--tx3);padding:28px!important;font-size:13px}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--bd2);border-radius:10px}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:24px;right:24px;z-index:999;background:var(--ink3);border:1px solid var(--bd2);border-radius:var(--r);padding:12px 16px;font-size:13px;color:var(--tx);display:flex;align-items:center;gap:10px;transform:translateY(80px);opacity:0;transition:all .25s;pointer-events:none;min-width:240px}
+.toast.show{transform:translateY(0);opacity:1}
+</style>
+</head>
+<body>
+
+<!-- ════ AUTH ════ -->
+<div class="screen active" id="auth-screen">
+  <div class="auth-brand">
+    <div class="brand-logo">
+      <div class="brand-mark">P</div>
+      <div class="brand-name">Pinnacle Injury Consultants<span>Case Management Platform</span></div>
+    </div>
+    <div class="brand-hero">
+      <div class="brand-tagline">Your cases.<br/><em>Handled right</em><br/>from day one.</div>
+      <div class="brand-desc">A purpose-built CRM for personal injury consulting — from lead to settlement, fully connected.</div>
+      <div class="brand-stats">
+        <div><div class="bsv">6</div><div class="bsl">Case stages</div></div>
+        <div><div class="bsv">3</div><div class="bsl">User roles</div></div>
+        <div><div class="bsv">100%</div><div class="bsl">Cloud-based</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="auth-form-panel">
+    <div class="auth-card">
+      <div class="auth-title">Welcome back</div>
+      <div class="auth-sub">Sign in to your PIC account</div>
+      <div class="demo-box">
+        <p>Demo accounts — click to fill</p>
+        <div class="demo-row" onclick="fd('admin@pic.com','admin123')"><span class="drole r-admin">Admin</span><span class="dcreds">admin@pic.com / admin123</span></div>
+        <div class="demo-row" onclick="fd('intake@pic.com','intake123')"><span class="drole r-spec">Specialist</span><span class="dcreds">intake@pic.com / intake123</span></div>
+        <div class="demo-row" onclick="fd('lawyer@pic.com','lawyer123')"><span class="drole r-lawyer">Lawyer</span><span class="dcreds">lawyer@pic.com / lawyer123</span></div>
+      </div>
+      <div class="auth-err" id="auth-err">Incorrect email or password.</div>
+      <div class="form-field"><label>Email</label>
+        <div class="iw"><i class="fa-regular fa-envelope"></i><input class="fi" type="email" id="le" placeholder="you@example.com"/></div>
+      </div>
+      <div class="form-field"><label>Password</label>
+        <div class="iw"><i class="fa-solid fa-lock"></i><input class="fi" type="password" id="lp" placeholder="••••••••"/></div>
+      </div>
+      <button class="btn-login" onclick="doLogin()"><i class="fa-solid fa-arrow-right-to-bracket"></i> Sign in</button>
+      <div style="font-size:12px;color:var(--tx3);text-align:center">Need access? Contact your administrator.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ════ APP ════ -->
+<div class="screen" id="app-screen">
+  <aside class="sidebar">
+    <div class="sb-hd"><div class="sb-mark">P</div><div><div class="sb-title">PIC</div><div class="sb-role" id="sb-role">—</div></div></div>
+    <nav class="sb-nav" id="sb-nav"></nav>
+    <div class="sb-ft">
+      <div class="sb-user">
+        <div class="sb-av" id="sb-av">?</div>
+        <div><div class="sb-un" id="sb-un">—</div><div class="sb-ue" id="sb-ue">—</div></div>
+        <button class="sb-lo" onclick="doLogout()" title="Sign out"><i class="fa-solid fa-right-from-bracket"></i></button>
+      </div>
+    </div>
+  </aside>
+  <div class="app-main">
+    <div class="topbar">
+      <span class="topbar-title" id="vt">Dashboard</span>
+      <div class="srch" id="srch-bar"><i class="fa-solid fa-magnifying-glass"></i><input type="text" id="si" placeholder="Search cases…" oninput="rv()"/></div>
+      <button class="btn" onclick="syncData()"><i class="fa-solid fa-arrows-rotate"></i></button>
+      <button class="btn btn-gold" id="ncb" onclick="openM('m-new-case')"><i class="fa-solid fa-plus"></i> New Case</button>
+    </div>
+    <div class="content" id="mc"></div>
+  </div>
+</div>
+
+<!-- ════ NEW CASE ════ -->
+<div class="mo" id="m-new-case">
+  <div class="modal">
+    <div class="mh"><span class="mt">New Case</span><button class="mc" onclick="closeM('m-new-case')"><i class="fa-solid fa-xmark"></i></button></div>
+    <div class="mb">
+      <div class="fg"><div class="field"><label>First name</label><input id="nc-fn" type="text" placeholder="Maria"/></div><div class="field"><label>Last name</label><input id="nc-ln" type="text" placeholder="Santos"/></div></div>
+      <div class="fg"><div class="field"><label>Phone</label><input id="nc-ph" type="tel" placeholder="(713) 555-0100"/></div><div class="field"><label>Email</label><input id="nc-em" type="email" placeholder="maria@email.com"/></div></div>
+      <div class="fg">
+        <div class="field"><label>Case type</label><select id="nc-ty"><option>Auto Accident</option><option>Slip &amp; Fall</option><option>Workplace Injury</option><option>Medical Malpractice</option><option>Other</option></select></div>
+        <div class="field"><label>Lead source</label><select id="nc-sr"><option>Website</option><option>Digital Ad</option><option>Referral</option><option>Walk-in</option><option>Social Media</option></select></div>
+      </div>
+      <div class="fg"><div class="field"><label>Incident date</label><input id="nc-dt" type="date"/></div><div class="field"><label>Specialist</label><select id="nc-sp"><option>Jordan Lee</option><option>Priya Nair</option><option>Marcus Hill</option><option>Unassigned</option></select></div></div>
+      <div class="fg full"><div class="field"><label>Notes</label><textarea id="nc-nt" placeholder="Brief description…"></textarea></div></div>
+    </div>
+    <div class="mf"><button class="btn" onclick="closeM('m-new-case')">Cancel</button><button class="btn btn-gold" onclick="saveCase()"><i class="fa-solid fa-check"></i> Create case</button></div>
+  </div>
+</div>
+
+<!-- ════ CASE DETAIL ════ -->
+<div class="mo" id="m-detail">
+  <div class="modal wide" style="max-height:90vh;overflow-y:auto">
+    <div class="mh"><span class="mt" id="m-detail-title">Case</span><button class="mc" onclick="closeM('m-detail')"><i class="fa-solid fa-xmark"></i></button></div>
+    <div class="mb" id="m-detail-body"></div>
+    <div class="mf" id="m-detail-footer"></div>
+  </div>
+</div>
+
+<!-- ════ REJECT REASON ════ -->
+<div class="mo" id="m-reject">
+  <div class="modal">
+    <div class="mh"><span class="mt">Reject case</span><button class="mc" onclick="closeM('m-reject')"><i class="fa-solid fa-xmark"></i></button></div>
+    <div class="mb">
+      <p style="font-size:13px;color:var(--tx2);margin-bottom:14px">Please provide a reason for rejecting this case. This will be visible to the PIC team for reassignment.</p>
+      <div class="field"><label>Rejection reason</label><textarea id="reject-reason" placeholder="e.g. Outside my area of practice, conflict of interest…" style="min-height:80px"></textarea></div>
+    </div>
+    <div class="mf"><button class="btn" onclick="closeM('m-reject')">Cancel</button><button class="btn btn-danger" onclick="confirmReject()"><i class="fa-solid fa-ban"></i> Confirm rejection</button></div>
+  </div>
+</div>
+
+<!-- ════ CREATE USER ════ -->
+<div class="mo" id="m-create-user">
+  <div class="modal">
+    <div class="mh"><span class="mt" id="cu-title">Create Account</span><button class="mc" onclick="closeM('m-create-user')"><i class="fa-solid fa-xmark"></i></button></div>
+    <div class="mb">
+      <div class="fg"><div class="field"><label>First name</label><input id="cu-fn" type="text" placeholder="Jane"/></div><div class="field"><label>Last name</label><input id="cu-ln" type="text" placeholder="Smith"/></div></div>
+      <div class="fg full"><div class="field"><label>Email</label><input id="cu-em" type="email" placeholder="jane@pic.com"/></div></div>
+      <div class="fg"><div class="field"><label>Role</label><select id="cu-role" onchange="cuRC(this.value)"><option value="specialist">Intake Specialist</option><option value="admin">Administrator</option><option value="lawyer">Lawyer / Attorney</option></select></div><div class="field"><label>Temp password</label><input id="cu-pw" type="text" placeholder="auto-generated"/></div></div>
+      <div id="cu-lf" style="display:none">
+        <div class="fg"><div class="field"><label>Law firm</label><input id="cu-firm" type="text" placeholder="Smith Legal Group"/></div><div class="field"><label>Bar number</label><input id="cu-bar" type="text" placeholder="TX-12345"/></div></div>
+        <div class="fg full"><div class="field"><label>Specialty</label><input id="cu-spec" type="text" placeholder="Auto Accident, Slip &amp; Fall"/></div></div>
+      </div>
+      <div id="cu-preview" style="display:none;margin-top:8px">
+        <div style="font-size:11px;color:var(--tx3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:7px">Invite preview</div>
+        <div style="background:var(--sur);border:1px solid var(--bd);border-radius:var(--r);padding:12px 14px;font-size:12px;color:var(--tx2);line-height:1.7;white-space:pre-wrap" id="cu-prev-text"></div>
+      </div>
+    </div>
+    <div class="mf"><button class="btn" onclick="closeM('m-create-user')">Cancel</button><button class="btn" onclick="prevInvite()" style="margin-right:auto"><i class="fa-solid fa-eye"></i> Preview</button><button class="btn btn-gold" onclick="createUser()"><i class="fa-solid fa-paper-plane"></i> Create &amp; invite</button></div>
+  </div>
+</div>
+
+<!-- ════ AUTO EDIT ════ -->
+<div class="mo" id="m-auto-edit">
+  <div class="modal">
+    <div class="mh"><span class="mt">Edit automation rule</span><button class="mc" onclick="closeM('m-auto-edit')"><i class="fa-solid fa-xmark"></i></button></div>
+    <div class="mb" id="m-auto-body"></div>
+    <div class="mf"><button class="btn" onclick="closeM('m-auto-edit')">Cancel</button><button class="btn btn-gold" onclick="saveAuto()"><i class="fa-solid fa-check"></i> Save</button></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"><i id="ti" class="fa-solid fa-circle-check" style="color:var(--settled)"></i><span id="tm"></span></div>
+
+<script>
+/* ═══════ CONSTANTS ═══════ */
+// Extended stage set
+const STAGES = ['Lead','Intake Completed','Sent to Lawyer','Case Accepted','Case Signed','Settlement Closed'];
+const REJECTED_STAGE = 'Rejected — Reassign';
+
+const PCLS = {
+  'Lead':'p-lead','Intake Completed':'p-intake',
+  'Sent to Lawyer':'p-sent','Case Accepted':'p-accepted',
+  'Rejected — Reassign':'p-rejected',
+  'Case Signed':'p-signed','Settlement Closed':'p-settled'
+};
+const STAGE_COLORS = ['var(--lead)','var(--intake)','#8b5cf6','var(--accepted)','var(--signed)','var(--settled)'];
+const TCLS = {'Auto Accident':'t-auto','Slip & Fall':'t-slip','Workplace Injury':'t-work','Medical Malpractice':'t-med','Other':'t-other'};
+
+/* NAV */
+const NAV = {
+  admin:[
+    {sec:'Main'},{id:'dashboard',ic:'fa-table-columns',lb:'Dashboard'},
+    {id:'pipeline',ic:'fa-bars-staggered',lb:'Pipeline',badge:'active'},
+    {id:'cases',ic:'fa-users',lb:'All Cases'},
+    {sec:'Stages'},{id:'leads',ic:'fa-bolt',lb:'Leads'},
+    {id:'intakes',ic:'fa-clipboard-list',lb:'Intakes'},
+    {id:'sent',ic:'fa-paper-plane',lb:'Sent to Lawyer',badge:'pending-lawyer'},
+    {id:'contracts',ic:'fa-file-signature',lb:'Contracts'},
+    {id:'settlements',ic:'fa-circle-dollar-to-slot',lb:'Settlements'},
+    {sec:'Insights'},{id:'analytics',ic:'fa-chart-line',lb:'Analytics'},
+    {id:'automations',ic:'fa-robot',lb:'Automations',badge:'alerts'},
+    {sec:'Administration'},{id:'users',ic:'fa-user-gear',lb:'User Management',badge:'pending-users'},
+    {id:'lawyers',ic:'fa-scale-balanced',lb:'Lawyer Network'},
+  ],
+  specialist:[
+    {sec:'Main'},{id:'dashboard',ic:'fa-table-columns',lb:'Dashboard'},
+    {id:'pipeline',ic:'fa-bars-staggered',lb:'Pipeline',badge:'active'},
+    {id:'cases',ic:'fa-users',lb:'All Cases'},
+    {sec:'Stages'},{id:'leads',ic:'fa-bolt',lb:'Leads'},
+    {id:'intakes',ic:'fa-clipboard-list',lb:'Intakes'},
+    {id:'sent',ic:'fa-paper-plane',lb:'Sent to Lawyer',badge:'pending-lawyer'},
+    {id:'contracts',ic:'fa-file-signature',lb:'Contracts'},
+    {id:'settlements',ic:'fa-circle-dollar-to-slot',lb:'Settlements'},
+  ],
+  lawyer:[
+    {sec:'My Cases'},
+    {id:'l-dashboard',ic:'fa-table-columns',lb:'Dashboard'},
+    {id:'l-pending',ic:'fa-inbox',lb:'Pending review',badge:'pending-atty'},
+    {id:'l-active',ic:'fa-folder-open',lb:'Active cases'},
+    {id:'l-signed',ic:'fa-file-signature',lb:'Signed cases'},
+  ],
+};
+
+/* ═══════ STATE ═══════ */
+let CU=null,cases=[],users={},lawyers=[],automations=[],cv='dashboard',af='All',activeId=null,editAutoId=null,rejectCaseId=null;
+
+/* ═══════ SEED ═══════ */
+const DU = {
+  'admin@pic.com':{pw:'admin123',name:'Alex Rivera',role:'admin',initials:'AR',status:'active',firm:null,created:Date.now()-86400000*30},
+  'intake@pic.com':{pw:'intake123',name:'Jordan Lee',role:'specialist',initials:'JL',status:'active',firm:null,created:Date.now()-86400000*20},
+  'lawyer@pic.com':{pw:'lawyer123',name:'Sarah Mitchell',role:'lawyer',initials:'SM',status:'active',firm:'Mitchell Law Group',created:Date.now()-86400000*15},
+};
+
+function seedAll(){
+  const now=Date.now(),d=n=>now-86400000*n;
+  if(!Object.keys(users).length) users=JSON.parse(JSON.stringify(DU));
+  if(!lawyers.length) lawyers=[
+    {id:'L1',name:'Sarah Mitchell',firm:'Mitchell Law Group',email:'lawyer@pic.com',specialty:'Auto Accident, Workplace',bar:'TX-44821',cases:0,userId:'lawyer@pic.com'},
+    {id:'L2',name:'David Okafor',firm:'Okafor & Associates',email:'d.okafor@okaforlaw.com',specialty:'Slip & Fall, Medical',bar:'TX-38821',cases:0,userId:null},
+    {id:'L3',name:'Priya Sharma',firm:'Sharma Legal',email:'p.sharma@sharmalegal.com',specialty:'Auto Accident, All types',bar:'TX-29910',cases:0,userId:null},
+    {id:'L4',name:'James Whitfield',firm:'Whitfield Partners',email:'j.whitfield@wpartners.com',specialty:'Medical Malpractice',bar:'TX-51133',cases:0,userId:null},
+  ];
+  if(!cases.length) cases=[
+    {id:1,first:'Diana',last:'Torres',phone:'(713) 555-0141',email:'diana@email.com',type:'Auto Accident',source:'Digital Ad',stage:'Lead',specialist:'Jordan Lee',lawyer:null,lawyerStatus:null,notes:'Rear-end on I-45. Neck and back pain.',date:'2026-04-28',created:d(5),lastActivity:d(5),history:['2026-04-28 — Lead created'],comments:[],contract:null,rejectionReason:null},
+    {id:2,first:'Marcus',last:'Webb',phone:'(832) 555-0198',email:'marcus@email.com',type:'Slip & Fall',source:'Website',stage:'Sent to Lawyer',specialist:'Jordan Lee',lawyer:'L2',lawyerStatus:'pending',notes:'Fell at retail store. Knee injury.',date:'2026-04-10',created:d(12),lastActivity:d(4),history:['2026-04-10 — Lead created','2026-04-15 — Intake completed','2026-04-16 — Sent to David Okafor'],comments:[{id:1,author:'Jordan Lee',role:'specialist',initials:'JL',text:'Intake complete. Strong case — witnesses confirmed. Sent to David Okafor.',ts:d(4),type:'staff'}],contract:null,rejectionReason:null},
+    {id:3,first:'Elena',last:'Kim',phone:'(281) 555-0067',email:'elena@email.com',type:'Workplace Injury',source:'Referral',stage:'Case Accepted',specialist:'Priya Nair',lawyer:'L3',lawyerStatus:'accepted',notes:'Back injury from warehouse lift.',date:'2026-03-22',created:d(25),lastActivity:d(2),history:['2026-03-22 — Lead created','2026-03-28 — Intake completed','2026-03-30 — Sent to Priya Sharma','2026-04-02 — Case accepted by Priya Sharma'],comments:[{id:1,author:'Priya Nair',role:'specialist',initials:'PN',text:'Client confirmed all incident details. Sending to Priya Sharma.',ts:d(10),type:'staff'},{id:2,author:'Priya Sharma',role:'lawyer',initials:'PS',text:'Reviewed the case. Clear liability, strong medical documentation. Accepting the case.',ts:d(2),type:'lawyer'}],contract:null,rejectionReason:null},
+    {id:4,first:'James',last:'Okonkwo',phone:'(713) 555-0212',email:'james@email.com',type:'Auto Accident',source:'Walk-in',stage:'Settlement Closed',specialist:'Jordan Lee',lawyer:'L1',lawyerStatus:'signed',notes:'T-bone collision, shoulder surgery.',date:'2025-12-01',created:d(60),lastActivity:d(10),history:['2025-12-01 — Lead created','2025-12-08 — Intake completed','2025-12-12 — Sent to Sarah Mitchell','2025-12-13 — Case accepted','2025-12-15 — Case signed','2026-02-20 — Settlement closed'],comments:[{id:1,author:'Sarah Mitchell',role:'lawyer',initials:'SM',text:'Strong case. Police report and ER records are solid. Engagement letter uploaded.',ts:d(45),type:'lawyer'},{id:2,author:'Sarah Mitchell',role:'lawyer',initials:'SM',text:'Settlement negotiations underway. Demand letter sent for $185,000.',ts:d(20),type:'lawyer'},{id:3,author:'Jordan Lee',role:'specialist',initials:'JL',text:'Client confirmed settlement accepted. Closing out the case.',ts:d(10),type:'staff'}],contract:'Engagement_Contract_Okonkwo.pdf',rejectionReason:null},
+    {id:5,first:'Sofia',last:'Reyes',phone:'(832) 555-0155',email:'sofia@email.com',type:'Medical Malpractice',source:'Social Media',stage:'Lead',specialist:'Priya Nair',lawyer:null,lawyerStatus:null,notes:'Post-op complications.',date:'2026-05-01',created:d(2),lastActivity:d(2),history:['2026-05-01 — Lead created'],comments:[],contract:null,rejectionReason:null},
+    {id:6,first:'Carlos',last:'Mendez',phone:'(713) 555-0309',email:'carlos@email.com',type:'Auto Accident',source:'Website',stage:'Rejected — Reassign',specialist:'Jordan Lee',lawyer:'L2',lawyerStatus:'rejected',notes:'Highway pile-up. Multiple injuries.',date:'2026-04-20',created:d(10),lastActivity:d(6),history:['2026-04-20 — Lead created','2026-04-25 — Intake completed','2026-04-26 — Sent to David Okafor','2026-04-27 — Rejected by David Okafor — Conflict of interest with defendant party'],comments:[{id:1,author:'David Okafor',role:'lawyer',initials:'DO',text:'I have a conflict of interest with the defendant in this case and cannot proceed.',ts:d(6),type:'lawyer'}],contract:null,rejectionReason:'Conflict of interest with defendant party'},
+    {id:7,first:'Yvonne',last:'Castillo',phone:'(281) 555-0417',email:'yvonne@email.com',type:'Slip & Fall',source:'Referral',stage:'Intake Completed',specialist:'Marcus Hill',lawyer:null,lawyerStatus:null,notes:'Slipped at grocery store. Hip fracture.',date:'2026-05-08',created:d(1),lastActivity:d(1),history:['2026-05-08 — Lead created','2026-05-09 — Intake completed'],comments:[],contract:null,rejectionReason:null},
+    {id:8,first:'Robert',last:'Zhang',phone:'(832) 555-0522',email:'robert@email.com',type:'Workplace Injury',source:'Digital Ad',stage:'Case Signed',specialist:'Priya Nair',lawyer:'L1',lawyerStatus:'signed',notes:'Construction fall. Leg fracture.',date:'2026-03-15',created:d(32),lastActivity:d(1),history:['2026-03-15 — Lead created','2026-03-20 — Intake completed','2026-03-22 — Sent to Sarah Mitchell','2026-03-24 — Case accepted','2026-03-28 — Case signed'],comments:[{id:1,author:'Sarah Mitchell',role:'lawyer',initials:'SM',text:'Accepted. OSHA report supports client liability claim. Engagement letter uploaded.',ts:d(4),type:'lawyer'}],contract:'Engagement_Contract_Zhang.pdf',rejectionReason:null},
+  ];
+  if(!automations.length) automations=[
+    {id:1,name:'Stale intake follow-up',desc:'Flag cases in Intake Completed with no activity beyond threshold.',icon:'fa-clock',color:'#f5a623',enabled:true,trigger:{stage:'Intake Completed',metric:'hours',value:72},action:'flag_specialist',actionLabel:'Flag + alert specialist'},
+    {id:2,name:'Lawyer no-response escalation',desc:'If a case sent to lawyer has no response (accept/reject) beyond threshold, escalate.',icon:'fa-user-clock',color:'#8b5cf6',enabled:true,trigger:{stage:'Sent to Lawyer',metric:'hours',value:48},action:'alert_admin',actionLabel:'Escalate to admin'},
+    {id:3,name:'New website lead alert',desc:'New website form submission — notify specialist immediately.',icon:'fa-globe',color:'#4f8ef7',enabled:true,trigger:{event:'new_lead',metric:'hours',value:0},action:'email_specialist',actionLabel:'Email specialist'},
+    {id:4,name:'Case signed — lawyer notification',desc:'When case moves to Case Signed, email the assigned lawyer.',icon:'fa-file-signature',color:'#9b72f5',enabled:true,trigger:{stage:'Case Signed',metric:'hours',value:0},action:'email_lawyer',actionLabel:'Email lawyer'},
+    {id:5,name:'7-day inactivity alert',desc:'No activity on any active case for threshold — alert specialist.',icon:'fa-bell',color:'#34c77b',enabled:false,trigger:{stage:'any_active',metric:'days',value:7},action:'alert_specialist',actionLabel:'Alert specialist'},
+    {id:6,name:'Settlement follow-up reminder',desc:'Cases in Case Signed beyond threshold — remind specialist.',icon:'fa-circle-dollar-to-slot',color:'#c9a84c',enabled:false,trigger:{stage:'Case Signed',metric:'days',value:30},action:'remind_specialist',actionLabel:'Remind specialist'},
+  ];
+  syncLC();persist();
+}
+
+function syncLC(){lawyers.forEach(l=>{l.cases=cases.filter(c=>c.lawyer===l.id&&c.stage!=='Settlement Closed').length;});}
+function persist(){try{localStorage.setItem('pic_c',JSON.stringify(cases));localStorage.setItem('pic_u',JSON.stringify(users));localStorage.setItem('pic_l',JSON.stringify(lawyers));localStorage.setItem('pic_a',JSON.stringify(automations));}catch(e){}}
+function hydrate(){try{const c=localStorage.getItem('pic_c');if(c)cases=JSON.parse(c);const u=localStorage.getItem('pic_u');if(u)users=JSON.parse(u);const l=localStorage.getItem('pic_l');if(l)lawyers=JSON.parse(l);const a=localStorage.getItem('pic_a');if(a)automations=JSON.parse(a);}catch(e){}seedAll();}
+function nid(){return cases.length?Math.max(...cases.map(c=>c.id))+1:1;}
+function td(){return new Date().toISOString().split('T')[0];}
+function ts(){return new Date().toLocaleString('en-US',{month:'short',day:'numeric',year:'numeric',hour:'numeric',minute:'2-digit',hour12:true});}
+function isNew(c){return(Date.now()-c.created)<172800000;}
+function isStale(c){const a=automations.find(x=>x.id===1);if(!a||!a.enabled)return false;const ms=a.trigger.metric==='hours'?a.trigger.value*3600000:a.trigger.value*86400000;return c.stage==='Intake Completed'&&(Date.now()-(c.lastActivity||c.created))>ms;}
+function isLawyerStale(c){const a=automations.find(x=>x.id===2);if(!a||!a.enabled)return false;const ms=a.trigger.metric==='hours'?a.trigger.value*3600000:a.trigger.value*86400000;return c.stage==='Sent to Lawyer'&&(Date.now()-(c.lastActivity||c.created))>ms;}
+function staleCount(){return cases.filter(isStale).length;}
+function pendingLawyerCount(){return cases.filter(c=>c.stage==='Sent to Lawyer').length;}
+function pendingUsersCount(){return Object.values(users).filter(u=>u.status==='pending').length;}
+function rejectedCount(){return cases.filter(c=>c.stage==='Rejected — Reassign').length;}
+function genPw(){return Math.random().toString(36).slice(2,8).toUpperCase()+Math.floor(Math.random()*900+100);}
+
+/* ═══════ AUTH ═══════ */
+function fd(e,p){document.getElementById('le').value=e;document.getElementById('lp').value=p;}
+function doLogin(){
+  const e=document.getElementById('le').value.trim().toLowerCase(),p=document.getElementById('lp').value;
+  const err=document.getElementById('auth-err');
+  // Load persisted users first, then fall back to defaults
+  if(!Object.keys(users).length){
+    try{const stored=localStorage.getItem('pic_u');if(stored)users=JSON.parse(stored);}catch(x){}
+    if(!Object.keys(users).length) users=JSON.parse(JSON.stringify(DU));
+  }
+  const u=users[e];
+  if(!u||u.pw!==p){err.textContent='Incorrect email or password.';err.classList.add('show');return;}
+  if(u.status==='pending'){err.textContent='Account pending. Check your email for setup instructions.';err.classList.add('show');return;}
+  err.classList.remove('show');CU={...u,email:e};hydrate();bootApp();
+}
+document.getElementById('lp').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
+function doLogout(){CU=null;cv='dashboard';document.getElementById('app-screen').classList.remove('active');document.getElementById('auth-screen').classList.add('active');document.getElementById('le').value='';document.getElementById('lp').value='';}
+
+/* ═══════ BOOT ═══════ */
+function bootApp(){
+  document.getElementById('auth-screen').classList.remove('active');
+  document.getElementById('app-screen').classList.add('active');
+  document.getElementById('sb-av').textContent=CU.initials||CU.name.split(' ').map(n=>n[0]).join('');
+  document.getElementById('sb-un').textContent=CU.name;
+  document.getElementById('sb-ue').textContent=CU.email;
+  const rl={admin:'Administrator',specialist:'Intake Specialist',lawyer:'Attorney'};
+  document.getElementById('sb-role').textContent=rl[CU.role]||CU.role;
+  document.getElementById('ncb').style.display=CU.role==='lawyer'?'none':'';
+  document.getElementById('srch-bar').style.display=CU.role==='lawyer'?'none':'';
+  buildNav();
+  cv=CU.role==='lawyer'?'l-dashboard':'dashboard';
+  rv();
+}
+
+function buildNav(){
+  const nav=document.getElementById('sb-nav');nav.innerHTML='';
+  (NAV[CU.role]||[]).forEach(it=>{
+    if(it.sec){const s=document.createElement('div');s.className='sb-sec';s.textContent=it.sec;nav.appendChild(s);return;}
+    const b=document.createElement('button');b.className='sb-item';b.dataset.v=it.id;b.onclick=()=>sv(it.id);
+    let bx='';
+    if(it.badge==='active') bx=`<span class="sb-badge blue" id="b-active">0</span>`;
+    if(it.badge==='alerts') bx=`<span class="sb-badge gold" id="b-alerts" style="display:none">!</span>`;
+    if(it.badge==='pending-users') bx=`<span class="sb-badge red" id="b-pusers" style="display:none">0</span>`;
+    if(it.badge==='pending-lawyer') bx=`<span class="sb-badge gold" id="b-player" style="display:none">0</span>`;
+    if(it.badge==='pending-atty') bx=`<span class="sb-badge green" id="b-patty" style="display:none">0</span>`;
+    b.innerHTML=`<i class="fa-solid ${it.ic}"></i>${it.lb}${bx}`;
+    nav.appendChild(b);
+  });
+}
+
+function updateBadges(){
+  const ba=document.getElementById('b-active');if(ba)ba.textContent=cases.filter(c=>c.stage!=='Settlement Closed').length;
+  const bal=document.getElementById('b-alerts');if(bal){const sc=staleCount();bal.style.display=sc>0?'':'none';bal.textContent=sc;}
+  const bpu=document.getElementById('b-pusers');if(bpu){const pc=pendingUsersCount();bpu.style.display=pc>0?'':'none';bpu.textContent=pc;}
+  const bpl=document.getElementById('b-player');if(bpl){const pc=pendingLawyerCount();bpl.style.display=pc>0?'':'none';bpl.textContent=pc;}
+  const bpa=document.getElementById('b-patty');if(bpa){const me=myLawyer();const pc=me?cases.filter(c=>c.lawyer===me.id&&c.lawyerStatus==='pending').length:0;bpa.style.display=pc>0?'':'none';bpa.textContent=pc;}
+}
+
+function sv(v){cv=v;af='All';rv();}
+function syncData(){hydrate();rv();toast('Data refreshed');}
+
+/* ═══════ RENDER ═══════ */
+function rv(){
+  document.querySelectorAll('.sb-item').forEach(el=>el.classList.toggle('active',el.dataset.v===cv));
+  updateBadges();
+  const titles={dashboard:'Dashboard',pipeline:'Pipeline',cases:'All Cases',leads:'Leads',intakes:'Intakes',sent:'Sent to Lawyer',contracts:'Contracts',settlements:'Settlements',analytics:'Analytics',automations:'Automations',users:'User Management',lawyers:'Lawyer Network','l-dashboard':'My Dashboard','l-pending':'Pending Review','l-active':'Active Cases','l-signed':'Signed Cases'};
+  document.getElementById('vt').textContent=titles[cv]||'';
+  const el=document.getElementById('mc');
+  if(cv==='dashboard') el.innerHTML=rDash();
+  else if(cv==='pipeline') el.innerHTML=rPipe();
+  else if(cv==='cases') el.innerHTML=rTable('All');
+  else if(cv==='leads') el.innerHTML=rTable('Lead');
+  else if(cv==='intakes') el.innerHTML=rTable('Intake Completed');
+  else if(cv==='sent') el.innerHTML=rTable('Sent to Lawyer');
+  else if(cv==='contracts') el.innerHTML=rTable('Case Signed');
+  else if(cv==='settlements') el.innerHTML=rTable('Settlement Closed');
+  else if(cv==='analytics') el.innerHTML=rAnalytics();
+  else if(cv==='automations') el.innerHTML=rAutos();
+  else if(cv==='users') el.innerHTML=rUsers();
+  else if(cv==='lawyers') el.innerHTML=rLawyers();
+  else if(cv==='l-dashboard') el.innerHTML=rLDash();
+  else if(cv==='l-pending') el.innerHTML=rLPending();
+  else if(cv==='l-active') el.innerHTML=rLActive();
+  else if(cv==='l-signed') el.innerHTML=rLSigned();
+}
+
+/* ═══════ STATUS FLOW ═══════ */
+function statusFlow(c){
+  const flow=[
+    {s:'Lead',ic:'fa-bolt'},{s:'Intake',ic:'fa-clipboard-list'},
+    {s:'Sent',ic:'fa-paper-plane'},{s:'Accepted',ic:'fa-handshake'},
+    {s:'Signed',ic:'fa-file-signature'},{s:'Settled',ic:'fa-circle-check'}
+  ];
+  const stageMap={'Lead':0,'Intake Completed':1,'Sent to Lawyer':2,'Case Accepted':3,'Case Signed':4,'Settlement Closed':5,'Rejected — Reassign':2};
+  const curIdx=stageMap[c.stage]??0;
+  const isRej=c.stage==='Rejected — Reassign';
+  return `<div class="status-flow">${flow.map((f,i)=>{
+    const done=i<curIdx,active=i===curIdx&&!isRej,rej=isRej&&i===2;
+    return `<div class="sf-step">${i>0?`<div class="sf-line ${done?'done':''}"></div>`:''}
+      <div class="sf-col">
+        <div class="sf-dot ${rej?'rejected-dot':done?'done':active?'active':''}"><i class="fa-solid ${f.ic}" style="font-size:10px"></i></div>
+        <div class="sf-label">${f.s}</div>
+      </div>
+    </div>`;
+  }).join('')}${isRej?`<div class="sf-step"><div class="sf-line"></div><div class="sf-col"><div class="sf-dot rejected-dot"><i class="fa-solid fa-ban" style="font-size:10px"></i></div><div class="sf-label" style="color:var(--danger)">Rejected</div></div></div>`:''}</div>`;
+}
+
+/* ═══════ DASHBOARD (PIC) ═══════ */
+function rDash(){
+  const tot=cases.length,leds=cases.filter(c=>c.stage==='Lead').length;
+  const sig=cases.filter(c=>c.stage==='Case Signed').length;
+  const set=cases.filter(c=>c.stage==='Settlement Closed').length;
+  const rej=rejectedCount(),sent=pendingLawyerCount();
+  const st=cases.filter(isStale),sl=cases.filter(isLawyerStale);
+  const alerts=[];
+  if(st.length) alerts.push(`<div class="alert-banner"><i class="fa-solid fa-triangle-exclamation"></i><span><strong>${st.length} stale intake${st.length>1?'s':''}</strong> need follow-up. <button class="ab" onclick="sv('intakes')">View →</button></span></div>`);
+  if(rej) alerts.push(`<div class="alert-banner danger"><i class="fa-solid fa-ban"></i><span><strong>${rej} case${rej>1?'s':''} rejected</strong> by attorney — reassignment needed. <button class="ab" onclick="sv('cases')">View →</button></span></div>`);
+  if(sl.length) alerts.push(`<div class="alert-banner"><i class="fa-solid fa-user-clock"></i><span><strong>${sl.length} case${sl.length>1?'s':''}</strong> sent to lawyer with no response yet.</span></div>`);
+  const recent=[...cases].sort((a,b)=>b.created-a.created).slice(0,8);
+  return `${alerts.join('')}
+  <div class="metrics">
+    <div class="metric" style="--mc:var(--lead)"><i class="fa-solid fa-users metric-icon"></i><div class="metric-label">Total cases</div><div class="metric-value">${tot}</div><div class="metric-sub">All time</div></div>
+    <div class="metric" style="--mc:var(--intake)"><i class="fa-solid fa-bolt metric-icon"></i><div class="metric-label">Active leads</div><div class="metric-value" style="color:var(--lead)">${leds}</div><div class="metric-sub">Needs intake</div></div>
+    <div class="metric" style="--mc:#8b5cf6"><i class="fa-solid fa-paper-plane metric-icon"></i><div class="metric-label">Sent to lawyer</div><div class="metric-value" style="color:#c4b5fd">${sent}</div><div class="metric-sub">Awaiting response</div></div>
+    <div class="metric" style="--mc:var(--settled)"><i class="fa-solid fa-circle-check metric-icon"></i><div class="metric-label">Settlements closed</div><div class="metric-value" style="color:var(--settled)">${set}</div><div class="metric-sub">${tot?Math.round(set/tot*100):0}% conversion</div></div>
+  </div>
+  <div class="metrics" style="margin-top:-8px">
+    <div class="metric" style="--mc:var(--accepted)"><i class="fa-solid fa-handshake metric-icon"></i><div class="metric-label">Cases accepted</div><div class="metric-value" style="color:var(--accepted)">${cases.filter(c=>c.stage==='Case Accepted').length}</div><div class="metric-sub">By attorney</div></div>
+    <div class="metric" style="--mc:var(--rejected)"><i class="fa-solid fa-ban metric-icon"></i><div class="metric-label">Rejected</div><div class="metric-value" style="color:var(--rejected)">${rej}</div><div class="metric-sub">Needs reassignment</div></div>
+    <div class="metric" style="--mc:var(--signed)"><i class="fa-solid fa-file-signature metric-icon"></i><div class="metric-label">Cases signed</div><div class="metric-value" style="color:var(--signed)">${sig}</div><div class="metric-sub">Engagement letters</div></div>
+    <div class="metric" style="--mc:var(--gold)"><i class="fa-solid fa-scale-balanced metric-icon"></i><div class="metric-label">Lawyers</div><div class="metric-value">${lawyers.length}</div><div class="metric-sub">In network</div></div>
+  </div>
+  <div class="sh"><span class="st">Recent cases</span><button class="btn btn-sm" onclick="sv('cases')">View all</button></div>
+  <div class="tc"><table>
+    <thead><tr><th>Client</th><th>Type</th><th>Stage</th><th>Lawyer</th><th>Specialist</th><th>Updated</th><th></th></tr></thead>
+    <tbody>${recent.map(c=>{const lw=lawyers.find(l=>l.id===c.lawyer);return `<tr>
+      <td><div class="tdp">${c.first} ${c.last}${isNew(c)?'<span class="ntag">NEW</span>':''}${isStale(c)?'<span class="stale-tag">Stale</span>':''}</div><div class="tds">${c.phone}</div></td>
+      <td><span class="tbadge ${TCLS[c.type]||'t-other'}">${c.type}</span></td>
+      <td><span class="pill ${PCLS[c.stage]||'p-lead'}"><span class="pdot"></span>${c.stage}</span></td>
+      <td style="font-size:12px;color:var(--tx2)">${lw?lw.name:'—'}</td>
+      <td style="font-size:12px;color:var(--tx3)">${c.specialist}</td>
+      <td style="font-size:12px;color:var(--tx3)">${new Date(c.lastActivity||c.created).toLocaleDateString()}</td>
+      <td><button class="ab" onclick="openDetail(${c.id})">View →</button></td>
+    </tr>`;}).join('')}</tbody>
+  </table></div>`;
+}
+
+/* ═══════ PIPELINE (expanded stages) ═══════ */
+function rPipe(){
+  const pipeStages=[...STAGES.filter(s=>s!=='Settlement Closed'),REJECTED_STAGE,'Settlement Closed'];
+  const colors=['var(--lead)','var(--intake)','#8b5cf6','var(--accepted)','var(--danger)','var(--signed)','var(--settled)'];
+  return `<div style="display:grid;grid-template-columns:repeat(7,1fr);gap:9px">${pipeStages.map((s,i)=>{
+    const col=cases.filter(c=>c.stage===s);
+    return `<div class="sc">
+      <div class="sch"><span class="scl">${s.replace(' — Reassign','')}</span><span class="scc">${col.length}</span></div>
+      <div class="sbar" style="background:${colors[i]};opacity:.4"></div>
+      ${col.length?col.map(c=>`<div class="kc" onclick="openDetail(${c.id})">
+        <div class="kn">${c.first} ${c.last}${isNew(c)?'<span class="ntag">NEW</span>':''}</div>
+        <div class="km">${lawyers.find(l=>l.id===c.lawyer)?.name||c.specialist}</div>
+        <span class="tbadge ${TCLS[c.type]||'t-other'}">${c.type}</span>
+      </div>`).join(''):'<div class="emc">—</div>'}
+    </div>`;
+  }).join('')}</div>`;
+}
+
+/* ═══════ TABLE ═══════ */
+function rTable(sf){
+  const q=(document.getElementById('si')||{}).value||'';
+  const allStages=[...STAGES,REJECTED_STAGE];
+  const rows=cases.filter(c=>{
+    const ms=sf==='All'||c.stage===sf,mf=af==='All'||c.stage===af;
+    const mq=!q||(c.first+' '+c.last+c.type+c.specialist+c.source).toLowerCase().includes(q.toLowerCase());
+    return ms&&mf&&mq;
+  });
+  const filterStages=sf==='All'?allStages:allStages;
+  const chips=sf==='All'?`<div class="fb">${['All',...STAGES,REJECTED_STAGE].map(s=>`<button class="chip ${af===s?'active':''}" onclick="setAF('${s}')">${s}</button>`).join('')}</div>`:'';
+  return `${chips}<div class="tc"><table>
+    <thead><tr><th>Client</th><th>Type</th><th>Stage</th><th>Lawyer</th><th>Specialist</th><th>Date</th><th>Contract</th><th></th></tr></thead>
+    <tbody>${rows.length?rows.map(c=>{const lw=lawyers.find(l=>l.id===c.lawyer);return `<tr>
+      <td><div class="tdp">${c.first} ${c.last}${isNew(c)?'<span class="ntag">NEW</span>':''}${isStale(c)?'<span class="stale-tag">Stale</span>':''}</div><div class="tds">${c.email}</div></td>
+      <td><span class="tbadge ${TCLS[c.type]||'t-other'}">${c.type}</span></td>
+      <td><span class="pill ${PCLS[c.stage]||'p-lead'}"><span class="pdot"></span>${c.stage}</span></td>
+      <td style="font-size:12px;color:var(--tx2)">${lw?lw.name:'—'}</td>
+      <td style="font-size:12px;color:var(--tx3)">${c.specialist}</td>
+      <td style="font-size:12px;color:var(--tx3)">${c.date||'—'}</td>
+      <td>${c.contract?`<span style="color:var(--settled);font-size:12px"><i class="fa-solid fa-file-circle-check"></i> Attached</span>`:'<span style="color:var(--tx3);font-size:12px">—</span>'}</td>
+      <td><button class="ab" onclick="openDetail(${c.id})">View →</button></td>
+    </tr>`;}).join(''):'<tr class="empty-row"><td colspan="8">No cases found</td></tr>'}
+    </tbody></table></div>`;
+}
+function setAF(f){af=f;rv();}
+
+/* ═══════ ANALYTICS ═══════ */
+function rAnalytics(){
+  const months=['Dec','Jan','Feb','Mar','Apr','May'];
+  const ld=[3,5,4,7,6,cases.filter(c=>c.stage==='Lead').length];
+  const sd=[2,3,2,4,3,cases.filter(c=>c.stage==='Case Signed').length];
+  const mx=Math.max(...ld,...sd,1);
+  const bar=(v,col)=>`<div class="bar" style="height:${Math.round(v/mx*88)}px;background:${col}" title="${v}"></div>`;
+  const tot=cases.length||1;
+  const dist=[...STAGES,REJECTED_STAGE].map((s,i)=>({s,n:cases.filter(c=>c.stage===s).length,c:[...STAGE_COLORS,'var(--rejected)'][i]||'var(--tx3)'}));
+  const src={};cases.forEach(c=>{src[c.source]=(src[c.source]||0)+1;});
+  syncLC();const mlc=Math.max(...lawyers.map(l=>l.cases),1);
+  let off=0;const circ=2*Math.PI*40;
+  const arcs=dist.filter(d=>d.n>0).map(d=>{const pct=d.n/tot,dash=circ*pct,gap=circ*(1-pct);const el=`<circle cx="55" cy="55" r="40" fill="none" stroke="${d.c}" stroke-width="13" stroke-dasharray="${dash} ${gap}" stroke-dashoffset="${-off}" transform="rotate(-90 55 55)" opacity=".85"/>`;off+=circ*pct;return el;}).join('');
+  return `
+  <div class="ag">
+    <div class="cc"><div class="ct">Monthly volume</div><div class="cs">Leads vs signed — 6 months</div>
+      <div class="bc">${months.map((m,i)=>`<div class="bg"><div class="bw">${bar(ld[i],'var(--lead)')}${bar(sd[i],'var(--signed)')}</div><div class="bl">${m}</div></div>`).join('')}</div>
+      <div class="leg"><div class="li"><div class="ld" style="background:var(--lead)"></div>Leads</div><div class="li"><div class="ld" style="background:var(--signed)"></div>Signed</div></div>
+    </div>
+    <div class="cc"><div class="ct">Stage distribution</div><div class="cs">All cases by stage</div>
+      <div style="display:flex;align-items:center;justify-content:center;margin:8px 0"><svg width="110" height="110" viewBox="0 0 110 110">${arcs}<text x="55" y="50" text-anchor="middle" style="font-size:18px;font-weight:600;fill:var(--tx);font-family:var(--head)">${tot}</text><text x="55" y="66" text-anchor="middle" style="font-size:10px;fill:var(--tx3);font-family:var(--body)">total</text></svg></div>
+      <div>${dist.filter(d=>d.n>0).map(d=>`<div class="dl-item"><div class="dl-dot" style="background:${d.c}"></div><span style="font-size:11px">${d.s}</span><span class="dl-v">${d.n}</span></div>`).join('')}</div>
+    </div>
+  </div>
+  <div class="ag3">
+    <div class="cc"><div class="ct">Funnel</div><div class="cs">Lead → settlement</div>
+      ${STAGES.map((s,i)=>{const n=cases.filter(c=>c.stage===s).length,w=Math.max(Math.round(n/tot*100),4);return `<div style="margin-bottom:9px"><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px"><span style="color:var(--tx2)">${s}</span><span style="font-weight:500">${n}</span></div><div style="height:7px;background:var(--sur2);border-radius:4px;overflow:hidden"><div style="height:100%;width:${w}%;background:${STAGE_COLORS[i]};border-radius:4px"></div></div></div>`;}).join('')}
+    </div>
+    <div class="cc"><div class="ct">Lead sources</div><div class="cs">Where leads originate</div>
+      ${Object.entries(src).map(([s,n])=>{const w=Math.round(n/tot*100);return `<div style="margin-bottom:9px"><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px"><span style="color:var(--tx2)">${s}</span><span style="font-weight:500">${n}</span></div><div style="height:7px;background:var(--sur2);border-radius:4px;overflow:hidden"><div style="height:100%;width:${w}%;background:var(--gold);border-radius:4px"></div></div></div>`;}).join('')}
+    </div>
+    <div class="cc"><div class="ct">Lawyer caseload</div><div class="cs">Active cases per attorney</div>
+      ${lawyers.map(l=>`<div class="lrow"><div class="lav">${l.name.split(' ').map(n=>n[0]).join('')}</div><div><div class="lnm">${l.name}</div><div style="font-size:11px;color:var(--tx3)">${l.firm}</div></div><div style="margin-left:auto;display:flex;align-items:center;gap:7px"><div class="lbw"><div class="lb" style="width:${Math.round(l.cases/mlc*100)}%"></div></div><span style="font-size:12px;color:var(--tx2);min-width:18px;text-align:right">${l.cases}</span></div></div>`).join('')}
+    </div>
+  </div>`;
+}
+
+/* ═══════ AUTOMATIONS ═══════ */
+function rAutos(){
+  const st=cases.filter(isStale);
+  let b=st.length?`<div class="alert-banner"><i class="fa-solid fa-triangle-exclamation"></i><span><strong>${st.length} stale intake case${st.length>1?'s':''}</strong> — ${st.map(c=>`${c.first} ${c.last}`).join(', ')}</span></div>`:'';
+  return `${b}<div class="sh"><span class="st">Automation rules</span><span style="font-size:12px;color:var(--tx3)">${automations.filter(a=>a.enabled).length}/${automations.length} active</span></div>
+  <div>${automations.map(a=>`<div class="acard ${a.enabled?'':'disabled'}">
+    <div class="aicon"><i class="fa-solid ${a.icon}" style="color:${a.color}"></i></div>
+    <div class="abody"><div class="aname">${a.name}</div><div class="adesc">${a.desc}</div>
+      <div class="arule">
+        <div class="rpart"><i class="fa-solid fa-clock"></i>${a.trigger.value===0?'Immediately':`After ${a.trigger.value} ${a.trigger.metric}`}</div>
+        <span style="font-size:11px;color:var(--tx3)">→</span>
+        <div class="rpart"><i class="fa-solid fa-bolt"></i>${a.actionLabel}</div>
+        <button class="btn btn-sm" style="margin-left:auto" onclick="openAutoEdit(${a.id})"><i class="fa-solid fa-pencil"></i> Edit</button>
+      </div>
+    </div>
+    <div class="atog"><label class="tog"><input type="checkbox" ${a.enabled?'checked':''} onchange="toggleAuto(${a.id},this.checked)"/><div class="tog-track"></div><div class="tog-thumb"></div></label></div>
+  </div>`).join('')}</div>`;
+}
+function toggleAuto(id,val){const a=automations.find(x=>x.id===id);if(a){a.enabled=val;persist();toast(a.name+(val?' enabled':' disabled'));}}
+function openAutoEdit(id){
+  editAutoId=id;const a=automations.find(x=>x.id===id);if(!a)return;
+  document.getElementById('m-auto-body').innerHTML=`
+    <div style="margin-bottom:14px"><div style="font-size:13px;font-weight:500;margin-bottom:3px">${a.name}</div><div style="font-size:12px;color:var(--tx2);line-height:1.6">${a.desc}</div></div>
+    <div style="height:1px;background:var(--bd);margin-bottom:14px"></div>
+    <div style="font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:.07em;color:var(--tx3);margin-bottom:10px">Wait period</div>
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px"><label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer"><input type="checkbox" id="ea-inst" ${a.trigger.value===0?'checked':''} onchange="document.getElementById('ea-wf').style.display=this.checked?'none':'flex'" style="width:14px;height:14px;accent-color:var(--gold)"/>Trigger immediately (no wait)</label></div>
+    <div id="ea-wf" style="display:${a.trigger.value===0?'none':'flex'};align-items:center;gap:10px;margin-bottom:14px">
+      <div class="field" style="flex:1"><label>Amount</label><input type="number" id="ea-val" min="1" max="9999" value="${a.trigger.value||72}" style="padding:9px 12px;border-radius:var(--r);border:1px solid var(--bd2);background:var(--sur);color:var(--tx);font-size:13px;font-family:var(--body);outline:none;width:100%"/></div>
+      <div class="field" style="flex:1"><label>Unit</label><select id="ea-unit" style="padding:9px 12px;border-radius:var(--r);border:1px solid var(--bd2);background:var(--sur);color:var(--tx);font-size:13px;font-family:var(--body);outline:none;width:100%"><option value="hours" ${a.trigger.metric==='hours'?'selected':''}>Hours</option><option value="days" ${a.trigger.metric==='days'?'selected':''}>Days</option></select></div>
+    </div>
+    <div style="height:1px;background:var(--bd);margin-bottom:14px"></div>
+    <div class="field"><label>Action</label><select id="ea-action" style="padding:9px 12px;border-radius:var(--r);border:1px solid var(--bd2);background:var(--sur);color:var(--tx);font-size:13px;font-family:var(--body);outline:none;width:100%"><option value="flag_specialist" ${a.action==='flag_specialist'?'selected':''}>Flag case + alert specialist</option><option value="email_specialist" ${a.action==='email_specialist'?'selected':''}>Email specialist</option><option value="email_lawyer" ${a.action==='email_lawyer'?'selected':''}>Email lawyer</option><option value="alert_specialist" ${a.action==='alert_specialist'?'selected':''}>Alert specialist</option><option value="alert_admin" ${a.action==='alert_admin'?'selected':''}>Escalate to admin</option><option value="remind_specialist" ${a.action==='remind_specialist'?'selected':''}>Remind specialist</option></select></div>`;
+  openM('m-auto-edit');
+}
+function saveAuto(){
+  const a=automations.find(x=>x.id===editAutoId);if(!a)return;
+  const inst=document.getElementById('ea-inst').checked;
+  if(inst){a.trigger.value=0;a.trigger.metric='hours';}else{a.trigger.value=parseInt(document.getElementById('ea-val').value)||72;a.trigger.metric=document.getElementById('ea-unit').value;}
+  const al={flag_specialist:'Flag + alert specialist',email_specialist:'Email specialist',email_lawyer:'Email lawyer',alert_specialist:'Alert specialist',alert_admin:'Escalate to admin',remind_specialist:'Remind specialist'};
+  a.action=document.getElementById('ea-action').value;a.actionLabel=al[a.action]||a.action;
+  persist();closeM('m-auto-edit');toast('Automation updated');rv();
+}
+
+/* ═══════ USER MANAGEMENT ═══════ */
+function rUsers(){
+  const all=Object.entries(users);
+  const rc={admin:'rgba(201,168,76,.2)',specialist:'rgba(79,142,247,.2)',lawyer:'rgba(52,199,123,.2)'};
+  const rt={admin:'var(--gold2)',specialist:'#7eb3ff',lawyer:'#5ddda0'};
+  const rp={admin:'p-admin',specialist:'p-spec',lawyer:'p-lawyer'};
+  const rl={admin:'Admin',specialist:'Specialist',lawyer:'Lawyer'};
+  const pend=all.filter(([,u])=>u.status==='pending').length;
+  return `<div class="sh"><span class="st">Team members</span><div style="display:flex;gap:8px">
+    <button class="btn btn-sm" onclick="openCU('staff')"><i class="fa-solid fa-user-plus"></i> Add staff</button>
+    <button class="btn btn-gold btn-sm" onclick="openCU('lawyer')"><i class="fa-solid fa-scale-balanced"></i> Invite lawyer</button>
+  </div></div>
+  ${pend?`<div class="alert-banner" style="margin-bottom:14px"><i class="fa-solid fa-envelope-open-text"></i><span><strong>${pend} pending invite${pend>1?'s':''}</strong> awaiting activation.</span></div>`:''}
+  <div class="tc" style="margin-bottom:20px"><table>
+    <thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Status</th><th>Firm</th><th>Created</th><th></th></tr></thead>
+    <tbody>${all.map(([email,u])=>`<tr>
+      <td><div style="display:flex;align-items:center;gap:9px"><div class="sb-av" style="width:28px;height:28px;font-size:10px;background:${rc[u.role]||'var(--sur2)'};color:${rt[u.role]||'var(--tx2)'}">${u.initials||u.name.split(' ').map(n=>n[0]).join('')}</div><div class="tdp">${u.name}</div></div></td>
+      <td style="font-size:12px;color:var(--tx3)">${email}</td>
+      <td><span class="pill ${rp[u.role]||'p-spec'}"><span class="pdot"></span>${rl[u.role]||u.role}</span></td>
+      <td>${u.status==='active'?'<span style="font-size:11px;padding:2px 8px;border-radius:20px;background:rgba(52,199,123,.12);color:#5ddda0">Active</span>':'<span class="pending-badge"><i class="fa-solid fa-clock" style="font-size:9px"></i>Pending</span>'}</td>
+      <td style="font-size:12px;color:var(--tx3)">${u.firm||'—'}</td>
+      <td style="font-size:12px;color:var(--tx3)">${u.created?new Date(u.created).toLocaleDateString():'—'}</td>
+      <td><div style="display:flex;gap:5px">${u.status==='pending'?`<button class="ab" onclick="resendI('${email}')"><i class="fa-solid fa-paper-plane"></i> Resend</button>`:''}${email!=='admin@pic.com'?`<button class="ab" style="color:var(--danger)" onclick="removeU('${email}')"><i class="fa-solid fa-trash"></i></button>`:''}</div></td>
+    </tr>`).join('')}</tbody>
+  </table></div>
+  <div class="sh"><span class="st">Role permissions</span></div>
+  <div class="tc"><table>
+    <thead><tr><th>Permission</th><th style="text-align:center">Admin</th><th style="text-align:center">Specialist</th><th style="text-align:center">Lawyer</th></tr></thead>
+    <tbody>${[['View all cases','✓','✓','Own only'],['Create / edit cases','✓','✓','✗'],['Send case to lawyer','✓','✓','✗'],['Accept / reject cases','✗','✗','✓'],['Upload engagement letter','✗','✗','✓'],['Add case comments','✓','✓','✓'],['Advance case stages','✓','✓','Via workflow'],['Assign lawyers','✓','✓','✗'],['View analytics','✓','✗','✗'],['Manage automations','✓','✗','✗'],['Manage users','✓','✗','✗']].map(([p,...v])=>`<tr><td style="font-size:13px">${p}</td>${v.map(x=>`<td style="text-align:center;font-size:13px;color:${x==='✓'?'var(--settled)':x==='✗'?'var(--danger)':'var(--tx2)'}">${x}</td>`).join('')}</tr>`).join('')}
+    </tbody>
+  </table></div>`;
+}
+function openCU(t){
+  document.getElementById('cu-title').textContent=t==='lawyer'?'Invite Lawyer':'Create Staff Account';
+  document.getElementById('cu-role').value=t==='lawyer'?'lawyer':'specialist';
+  document.getElementById('cu-pw').value=genPw();
+  document.getElementById('cu-lf').style.display=t==='lawyer'?'':'none';
+  document.getElementById('cu-preview').style.display='none';
+  ['cu-fn','cu-ln','cu-em','cu-firm','cu-bar','cu-spec'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  openM('m-create-user');
+}
+function cuRC(r){document.getElementById('cu-lf').style.display=r==='lawyer'?'':'none';}
+function prevInvite(){
+  const fn=document.getElementById('cu-fn').value||'[First]',ln=document.getElementById('cu-ln').value||'[Last]';
+  const em=document.getElementById('cu-em').value||'[email]',role=document.getElementById('cu-role').value;
+  const pw=document.getElementById('cu-pw').value,firm=document.getElementById('cu-firm')?.value||'';
+  const rl={admin:'Administrator',specialist:'Intake Specialist',lawyer:'Attorney'};
+  let body=`Hi ${fn} ${ln},\n\nYou've been invited to join the PIC Case Management Platform as a ${rl[role]}.\n\n  URL: pinnacle-injury.netlify.app/case-management\n  Email: ${em}\n  Temp password: ${pw}\n`;
+  if(role==='lawyer'&&firm)body+=`\nYou'll see only cases assigned to ${firm} through your secure lawyer portal.\n`;
+  body+=`\nPlease change your password on first sign-in.\n\n— The PIC Team`;
+  document.getElementById('cu-prev-text').textContent=body;
+  document.getElementById('cu-preview').style.display='';
+}
+function createUser(){
+  const fn=document.getElementById('cu-fn').value.trim(),ln=document.getElementById('cu-ln').value.trim();
+  const email=document.getElementById('cu-em').value.trim().toLowerCase(),role=document.getElementById('cu-role').value,pw=document.getElementById('cu-pw').value;
+  if(!fn||!ln||!email){alert('Please fill in name and email.');return;}
+  if(users[email]){alert('Account with this email already exists.');return;}
+  const firm=document.getElementById('cu-firm')?.value||null,bar=document.getElementById('cu-bar')?.value||null,spec=document.getElementById('cu-spec')?.value||null;
+  users[email]={pw,name:`${fn} ${ln}`,role,initials:fn[0].toUpperCase()+(ln[0]||'').toUpperCase(),status:'pending',firm:firm||null,created:Date.now()};
+  if(role==='lawyer') lawyers.push({id:'L'+(lawyers.length+5),name:`${fn} ${ln}`,firm:firm||'',email,specialty:spec||'',bar:bar||'',cases:0,userId:email});
+  persist();closeM('m-create-user');toast(`Account created for ${fn} ${ln} — invite sent to ${email}`);rv();
+}
+function resendI(em){toast(`Invite resent to ${em}`);}
+function removeU(em){if(!confirm(`Remove account for ${users[em]?.name}?`))return;delete users[em];persist();toast('Account removed');rv();}
+
+/* ═══════ LAWYERS ═══════ */
+function rLawyers(){
+  syncLC();
+  return `<div class="sh"><span class="st">Attorney network</span><button class="btn btn-gold btn-sm" onclick="openCU('lawyer')"><i class="fa-solid fa-plus"></i> Add lawyer</button></div>
+  <div class="tc" style="margin-bottom:20px"><table>
+    <thead><tr><th>Attorney</th><th>Firm</th><th>Bar #</th><th>Specialty</th><th>Active cases</th><th>Portal</th><th>Email</th></tr></thead>
+    <tbody>${lawyers.map(l=>{const ha=!!l.userId&&users[l.userId];return `<tr>
+      <td><div style="display:flex;align-items:center;gap:8px"><div class="lav">${l.name.split(' ').map(n=>n[0]).join('')}</div><div class="tdp">${l.name}</div></div></td>
+      <td style="font-size:13px;color:var(--tx2)">${l.firm}</td><td style="font-size:12px;color:var(--tx3)">${l.bar||'—'}</td>
+      <td style="font-size:12px;color:var(--tx3)">${l.specialty}</td>
+      <td style="font-weight:500">${l.cases}</td>
+      <td>${ha?'<span style="font-size:11px;padding:2px 8px;border-radius:20px;background:rgba(52,199,123,.12);color:#5ddda0"><i class="fa-solid fa-circle-check" style="font-size:9px"></i> Active</span>':'<span style="font-size:11px;padding:2px 8px;border-radius:20px;background:rgba(245,166,35,.1);color:var(--warn)">No portal</span>'}</td>
+      <td style="font-size:12px;color:var(--tx3)">${l.email}</td>
+    </tr>`;}).join('')}</tbody>
+  </table></div>
+  <div class="sh" style="margin-top:4px"><span class="st">Case assignments</span></div>
+  <div class="tc"><table>
+    <thead><tr><th>Client</th><th>Type</th><th>Stage</th><th>Lawyer</th><th>Specialist</th><th></th></tr></thead>
+    <tbody>${cases.filter(c=>c.lawyer).map(c=>{const l=lawyers.find(x=>x.id===c.lawyer);return `<tr>
+      <td class="tdp">${c.first} ${c.last}</td>
+      <td><span class="tbadge ${TCLS[c.type]||'t-other'}">${c.type}</span></td>
+      <td><span class="pill ${PCLS[c.stage]||'p-lead'}"><span class="pdot"></span>${c.stage}</span></td>
+      <td style="font-size:13px;color:var(--tx2)">${l?l.name:'—'}</td>
+      <td style="font-size:12px;color:var(--tx3)">${c.specialist}</td>
+      <td><button class="ab" onclick="openDetail(${c.id})">View →</button></td>
+    </tr>`;}).join('')}</tbody>
+  </table></div>`;
+}
+
+/* ═══════ LAWYER PORTAL ═══════ */
+function myLawyer(){return lawyers.find(l=>l.userId===CU?.email)||lawyers[0];}
+function myCases(){const me=myLawyer();return me?cases.filter(c=>c.lawyer===me.id):[];}
+
+function rLDash(){
+  const my=myCases();
+  const pending=my.filter(c=>c.lawyerStatus==='pending').length;
+  const active=my.filter(c=>['accepted'].includes(c.lawyerStatus)).length;
+  const signed=my.filter(c=>c.lawyerStatus==='signed').length;
+  const settled=my.filter(c=>c.stage==='Settlement Closed').length;
+  const me=myLawyer();
+  let banner='';
+  if(pending) banner=`<div class="alert-banner success"><i class="fa-solid fa-inbox"></i><span><strong>${pending} new case${pending>1?'s':''}</strong> assigned and awaiting your review. <button class="ab" onclick="sv('l-pending')">Review →</button></span></div>`;
+  return `${banner}
+  <div class="metrics" style="grid-template-columns:repeat(4,1fr)">
+    <div class="metric" style="--mc:#8b5cf6"><i class="fa-solid fa-inbox metric-icon"></i><div class="metric-label">Pending review</div><div class="metric-value" style="color:#c4b5fd">${pending}</div><div class="metric-sub">Awaiting your decision</div></div>
+    <div class="metric" style="--mc:var(--accepted)"><i class="fa-solid fa-handshake metric-icon"></i><div class="metric-label">Active (accepted)</div><div class="metric-value" style="color:var(--accepted)">${active}</div><div class="metric-sub">Awaiting signing</div></div>
+    <div class="metric" style="--mc:var(--signed)"><i class="fa-solid fa-file-signature metric-icon"></i><div class="metric-label">Signed cases</div><div class="metric-value" style="color:var(--signed)">${signed}</div><div class="metric-sub">In progress</div></div>
+    <div class="metric" style="--mc:var(--settled)"><i class="fa-solid fa-circle-check metric-icon"></i><div class="metric-label">Settlements</div><div class="metric-value" style="color:var(--settled)">${settled}</div><div class="metric-sub">Closed</div></div>
+  </div>
+  <div class="sh"><span class="st">All my cases</span></div>
+  ${rLawyerTable(my)}`;
+}
+
+function rLPending(){
+  const my=myCases().filter(c=>c.lawyerStatus==='pending');
+  if(!my.length) return `<div style="text-align:center;color:var(--tx3);padding:48px;font-size:13px"><i class="fa-solid fa-inbox" style="font-size:28px;margin-bottom:12px;display:block"></i>No cases pending review</div>`;
+  return `<div class="sh"><span class="st">Cases pending your review</span><span style="font-size:12px;color:var(--tx3)">${my.length} case${my.length>1?'s':''}</span></div>
+  ${my.map(c=>{const lw=lawyers.find(l=>l.id===c.lawyer);return `<div class="tc" style="margin-bottom:12px">
+    <div style="padding:16px 20px;border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between">
+      <div><div class="tdp" style="font-size:14px">${c.first} ${c.last} <span class="tbadge ${TCLS[c.type]||'t-other'}" style="margin-left:6px">${c.type}</span></div>
+        <div class="tds">Specialist: ${c.specialist} · Incident: ${c.date||'—'}</div></div>
+      <span class="pill p-sent"><span class="pdot"></span>Awaiting review</span>
+    </div>
+    <div style="padding:14px 20px">
+      <p style="font-size:13px;color:var(--tx2);line-height:1.7;margin-bottom:14px">${c.notes||'No notes provided.'}</p>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-success" onclick="acceptCase(${c.id})"><i class="fa-solid fa-handshake"></i> Accept case</button>
+        <button class="btn btn-danger" onclick="openReject(${c.id})"><i class="fa-solid fa-ban"></i> Reject case</button>
+        <button class="ab" style="margin-left:auto" onclick="openDetail(${c.id})">View full file →</button>
+      </div>
+    </div>
+  </div>`;}).join('')}`;
+}
+
+function rLActive(){
+  const my=myCases().filter(c=>c.lawyerStatus==='accepted');
+  return `<div class="sh"><span class="st">Accepted cases</span></div>
+  ${my.length?rLawyerTable(my):`<div style="text-align:center;color:var(--tx3);padding:48px;font-size:13px">No accepted cases yet</div>`}`;
+}
+function rLSigned(){
+  const my=myCases().filter(c=>c.lawyerStatus==='signed'||c.stage==='Settlement Closed');
+  return `<div class="sh"><span class="st">Signed & closed cases</span></div>${my.length?rLawyerTable(my):`<div style="text-align:center;color:var(--tx3);padding:48px;font-size:13px">No signed cases yet</div>`}`;
+}
+function rLawyerTable(list){
+  return `<div class="tc"><table>
+    <thead><tr><th>Client</th><th>Type</th><th>Stage</th><th>Specialist</th><th>Date</th><th>Contract</th><th></th></tr></thead>
+    <tbody>${list.length?list.map(c=>`<tr>
+      <td><div class="tdp">${c.first} ${c.last}</div><div class="tds">${c.email}</div></td>
+      <td><span class="tbadge ${TCLS[c.type]||'t-other'}">${c.type}</span></td>
+      <td><span class="pill ${PCLS[c.stage]||'p-lead'}"><span class="pdot"></span>${c.stage}</span></td>
+      <td style="font-size:12px;color:var(--tx3)">${c.specialist}</td>
+      <td style="font-size:12px;color:var(--tx3)">${c.date||'—'}</td>
+      <td>${c.contract?`<span style="color:var(--settled);font-size:12px"><i class="fa-solid fa-file-circle-check"></i> Attached</span>`:'<span style="color:var(--tx3);font-size:12px">—</span>'}</td>
+      <td><button class="ab" onclick="openDetail(${c.id})">View →</button></td>
+    </tr>`).join(''):'<tr class="empty-row"><td colspan="7">No cases</td></tr>'}</tbody>
+  </table></div>`;
+}
+
+/* ═══════ ACCEPT / REJECT WORKFLOW ═══════ */
+function acceptCase(id){
+  const c=cases.find(x=>x.id===id);if(!c)return;
+  const lw=lawyers.find(l=>l.id===c.lawyer);
+  c.stage='Case Accepted';c.lawyerStatus='accepted';
+  c.history.push(`${td()} — Case accepted by ${lw?lw.name:'attorney'}`);
+  c.lastActivity=Date.now();
+  addComment(c,'Case reviewed and accepted. Proceeding with engagement.','lawyer');
+  persist();toast('Case accepted — status updated');rv();openDetail(id);
+}
+
+function openReject(id){
+  rejectCaseId=id;
+  document.getElementById('reject-reason').value='';
+  openM('m-reject');
+}
+function confirmReject(){
+  const c=cases.find(x=>x.id===rejectCaseId);if(!c)return;
+  const reason=document.getElementById('reject-reason').value.trim()||'No reason provided';
+  const lw=lawyers.find(l=>l.id===c.lawyer);
+  c.stage=REJECTED_STAGE;c.lawyerStatus='rejected';c.rejectionReason=reason;
+  c.history.push(`${td()} — Rejected by ${lw?lw.name:'attorney'} — ${reason}`);
+  c.lastActivity=Date.now();
+  addComment(c,`Case rejected: ${reason}`,'lawyer');
+  persist();closeM('m-reject');toast('Case rejected — returned to PIC for reassignment',true);rv();
+}
+
+function addComment(c,text,type){
+  if(!c.comments) c.comments=[];
+  const lw=lawyers.find(l=>l.id===c.lawyer);
+  const isLawyer=type==='lawyer'||CU?.role==='lawyer';
+  c.comments.push({id:Date.now(),author:CU?CU.name:(isLawyer?lw?.name:'System'),role:CU?.role||(isLawyer?'lawyer':'system'),initials:CU?.initials||(lw?.name.split(' ').map(n=>n[0]).join(''))||'?',text,ts:Date.now(),type:isLawyer?'lawyer':'staff'});
+}
+
+/* ═══════ CASE DETAIL ═══════ */
+function openDetail(id){
+  activeId=id;
+  const c=cases.find(x=>x.id===id);if(!c)return;
+  const isLawyer=CU.role==='lawyer',isPIC=!isLawyer;
+  const lw=lawyers.find(l=>l.id===c.lawyer);
+  document.getElementById('m-detail-title').textContent=`${c.first} ${c.last}`;
+
+  /* ── action banner (lawyer only, when pending) ── */
+  let actBanner='';
+  if(isLawyer&&c.lawyerStatus==='pending'){
+    actBanner=`<div class="action-banner pending"><div class="ab-title">Case assigned — pending your review</div>
+      <div class="ab-desc">Review the case details below. Accept to proceed with representation, or reject if unable to take this case.</div>
+      <div class="ab-actions">
+        <button class="btn btn-success" onclick="acceptCase(${c.id});closeM('m-detail')"><i class="fa-solid fa-handshake"></i> Accept case</button>
+        <button class="btn btn-danger" onclick="closeM('m-detail');openReject(${c.id})"><i class="fa-solid fa-ban"></i> Reject case</button>
+      </div>
+    </div>`;
+  }
+  if(isLawyer&&c.lawyerStatus==='rejected'){
+    actBanner=`<div class="action-banner rejected"><div class="ab-title" style="color:var(--danger)">Case rejected</div><div class="ab-desc">Reason: ${c.rejectionReason||'Not specified'}</div></div>`;
+  }
+  if(c.stage===REJECTED_STAGE&&isPIC){
+    actBanner=`<div class="action-banner rejected">
+      <div class="ab-title" style="color:var(--danger)">Case rejected by attorney — reassignment needed</div>
+      <div class="ab-desc">Reason: <strong>${c.rejectionReason||'Not specified'}</strong><br/>Assign a different lawyer below to resend this case.</div>
+    </div>`;
+  }
+
+  /* ── sign prompt (lawyer, accepted but not signed) ── */
+  let signPrompt='';
+  if(isLawyer&&c.lawyerStatus==='accepted'){
+    signPrompt=`<div class="dsec"><h3>Sign & upload engagement letter</h3>
+      ${c.contract
+        ?`<div class="cfile"><i class="fa-solid fa-file-pdf"></i>${c.contract}<span style="margin-left:auto;font-size:12px;color:var(--settled);font-weight:500"><i class="fa-solid fa-circle-check"></i> Uploaded</span></div>
+          <button class="btn btn-gold" style="margin-top:10px;width:100%" onclick="signCase(${c.id})"><i class="fa-solid fa-file-signature"></i> Mark case as signed</button>`
+        :`<div class="cdrop" onclick="uploadEngagement(${c.id})"><i class="fa-solid fa-cloud-arrow-up"></i><p>Upload signed engagement letter to proceed</p><p style="font-size:11px;margin-top:3px">PDF required to advance to Case Signed</p></div>`}
+    </div>`;
+  }
+
+  /* ── lawyer assign (PIC only) ── */
+  const lwSel=isPIC?`<div class="di" style="grid-column:span 2"><div class="dil">Assign / reassign lawyer</div>
+    <select onchange="assignLawyer(${c.id},this.value)" style="width:100%;margin-top:5px;padding:7px 10px;border-radius:var(--r);border:1px solid var(--bd2);background:var(--sur);color:var(--tx);font-size:12px;font-family:var(--body);outline:none">
+      <option value="">— Unassigned —</option>
+      ${lawyers.map(l=>`<option value="${l.id}" ${c.lawyer===l.id?'selected':''}>${l.name} (${l.firm})</option>`).join('')}
+    </select>
+    ${c.lawyer&&c.stage==='Intake Completed'?`<button class="btn btn-gold btn-sm" style="margin-top:8px" onclick="sendToLawyer(${c.id})"><i class="fa-solid fa-paper-plane"></i> Send to lawyer</button>`:''}
+    ${c.stage==='Intake Completed'&&!c.lawyer?`<p style="font-size:11px;color:var(--tx3);margin-top:6px">Assign a lawyer above, then send the case to their portal.</p>`:''}
+  </div>`:`<div class="di"><div class="dil">Assigned lawyer</div><div class="div_">${lw?lw.name:'—'}</div></div>`;
+
+  /* ── build left col ── */
+  const leftCol=`
+    ${statusFlow(c)}
+    ${actBanner}
+    <div class="dsec"><h3>Client information</h3>
+      <div class="dgrid">
+        <div class="di"><div class="dil">Full name</div><div class="div_">${c.first} ${c.last}</div></div>
+        <div class="di"><div class="dil">Phone</div><div class="div_">${c.phone||'—'}</div></div>
+        <div class="di"><div class="dil">Email</div><div class="div_" style="font-size:12px">${c.email||'—'}</div></div>
+        <div class="di"><div class="dil">Incident date</div><div class="div_">${c.date||'—'}</div></div>
+        <div class="di"><div class="dil">Case type</div><div class="div_"><span class="tbadge ${TCLS[c.type]||'t-other'}">${c.type}</span></div></div>
+        <div class="di"><div class="dil">Lead source</div><div class="div_">${c.source}</div></div>
+        <div class="di"><div class="dil">Specialist</div><div class="div_">${c.specialist}</div></div>
+        <div class="di"><div class="dil">Stage</div><div class="div_"><span class="pill ${PCLS[c.stage]||'p-lead'}"><span class="pdot"></span>${c.stage}</span></div></div>
+        ${lwSel}
+      </div>
+    </div>
+    ${c.notes?`<div class="dsec"><h3>Case notes</h3><p style="font-size:13px;color:var(--tx2);line-height:1.7">${c.notes}</p></div>`:''}
+    ${signPrompt}
+    ${isPIC?`<div class="dsec"><h3>Engagement contract</h3>
+      ${c.contract
+        ?`<div class="cfile"><i class="fa-solid fa-file-pdf"></i>${c.contract}<span style="margin-left:auto;font-size:12px;color:var(--settled);font-weight:500"><i class="fa-solid fa-circle-check"></i> Attached</span></div>`
+        :`<div class="cdrop" onclick="attachCon(${c.id})"><i class="fa-solid fa-cloud-arrow-up"></i><p>Attach engagement contract</p></div>`}
+    </div>`:''}
+    <div class="dsec"><h3>Case timeline</h3>
+      <div class="tl">${(c.history||[]).map((h,i)=>`<div class="tli"><div class="tldot ${i===(c.history.length-1)?'on':''}"></div><div class="tlt">${h}</div></div>`).join('')}</div>
+    </div>`;
+
+  /* ── right col: comments ── */
+  const comments=c.comments||[];
+  const rightCol=`<div class="comment-panel">
+    <div class="dsec"><h3>Comments & updates</h3></div>
+    <div class="comment-list" id="comment-list-${c.id}">
+      ${comments.length?comments.map(cm=>`<div class="comment-item ${cm.type==='lawyer'?'lawyer-comment':'staff-comment'}">
+        <div class="ci-header">
+          <div class="ci-av ${cm.type==='lawyer'?'lawyer':cm.role==='admin'?'admin':'staff'}">${cm.initials||'?'}</div>
+          <span class="ci-name">${cm.author}</span>
+          <span class="ci-role">${cm.role||'staff'}</span>
+          <span class="ci-time">${new Date(cm.ts).toLocaleString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit',hour12:true})}</span>
+        </div>
+        <div class="ci-text">${cm.text}</div>
+      </div>`).join(''):`<div class="no-comments"><i class="fa-regular fa-comment-dots" style="font-size:22px;margin-bottom:8px;display:block;opacity:.4"></i>No comments yet</div>`}
+    </div>
+    <div class="comment-input-wrap">
+      <textarea class="comment-input" id="comment-input-${c.id}" placeholder="Add a comment or update visible to all parties…" rows="3"></textarea>
+      <button class="btn btn-gold btn-sm" onclick="postComment(${c.id})" style="align-self:flex-end"><i class="fa-solid fa-paper-plane"></i> Post comment</button>
+    </div>
+  </div>`;
+
+  document.getElementById('m-detail-body').innerHTML=`<div class="detail-layout">${leftCol}${rightCol}</div>`;
+
+  /* footer buttons */
+  const idx=STAGES.indexOf(c.stage);
+  const canAdv=idx>=0&&idx<STAGES.length-1&&isPIC&&c.stage!==REJECTED_STAGE&&c.stage!=='Intake Completed';
+  const canSendToLawyer=isPIC&&c.stage==='Intake Completed'&&c.lawyer&&c.stage!=='Sent to Lawyer';
+  let footerBtns='<button class="btn" onclick="closeM(\'m-detail\')">Close</button>';
+  if(canSendToLawyer) footerBtns+=`<button class="btn btn-gold" onclick="sendToLawyer(${c.id})"><i class="fa-solid fa-paper-plane"></i> Send to lawyer</button>`;
+  else if(canAdv) footerBtns+=`<button class="btn btn-gold" id="adv-btn" onclick="advStage()"><i class="fa-solid fa-arrow-right"></i> Move to: ${STAGES[idx+1]}</button>`;
+  document.getElementById('m-detail-footer').innerHTML=footerBtns;
+
+  openM('m-detail');
+  // scroll comments to bottom
+  setTimeout(()=>{const cl=document.getElementById(`comment-list-${c.id}`);if(cl)cl.scrollTop=cl.scrollHeight;},100);
+}
+
+function postComment(cid){
+  const c=cases.find(x=>x.id===cid);if(!c)return;
+  const inp=document.getElementById(`comment-input-${cid}`);
+  const text=inp?.value.trim();if(!text)return;
+  addComment(c,text,CU.role);
+  c.lastActivity=Date.now();
+  persist();
+  inp.value='';
+  toast('Comment posted');
+  openDetail(cid); // refresh
+}
+
+function sendToLawyer(cid){
+  const c=cases.find(x=>x.id===cid);if(!c||!c.lawyer)return;
+  const lw=lawyers.find(l=>l.id===c.lawyer);
+  c.stage='Sent to Lawyer';c.lawyerStatus='pending';
+  c.history.push(`${td()} — Sent to ${lw?lw.name:'lawyer'} for review`);
+  c.lastActivity=Date.now();
+  persist();toast(`Case sent to ${lw?lw.name:'lawyer'}`);rv();openDetail(cid);
+}
+
+function uploadEngagement(cid){
+  const n=prompt('Enter engagement letter filename (e.g. Engagement_Letter_Smith.pdf):');
+  if(!n)return;
+  const c=cases.find(x=>x.id===cid);if(!c)return;
+  c.contract=n.trim();
+  c.history.push(`${td()} — Engagement letter uploaded by attorney`);
+  c.lastActivity=Date.now();
+  persist();toast('Engagement letter uploaded');openDetail(cid);
+}
+
+function signCase(cid){
+  const c=cases.find(x=>x.id===cid);if(!c||!c.contract){toast('Please upload the engagement letter first',true);return;}
+  const lw=lawyers.find(l=>l.id===c.lawyer);
+  c.stage='Case Signed';c.lawyerStatus='signed';
+  c.history.push(`${td()} — Case signed by ${lw?lw.name:'attorney'} — engagement letter on file`);
+  c.lastActivity=Date.now();
+  addComment(c,'Engagement letter has been signed and uploaded. Case is now active.','lawyer');
+  persist();toast('Case signed — status updated for all parties');rv();openDetail(cid);
+}
+
+function assignLawyer(cid,lid){
+  const c=cases.find(x=>x.id===cid);if(!c)return;
+  c.lawyer=lid||null;
+  const lw=lawyers.find(l=>l.id===lid);
+  c.history.push(`${td()} — ${lw?`Assigned to ${lw.name}`:'Lawyer unassigned'}`);
+  c.lastActivity=Date.now();
+  syncLC();persist();
+  toast(lw?`Assigned to ${lw.name}`:'Lawyer removed');
+  openDetail(cid);
+}
+
+function attachCon(id){
+  const c=cases.find(x=>x.id===id);if(!c)return;
+  const n=prompt('Enter contract filename (e.g. Engagement_Contract_Smith.pdf):');if(!n)return;
+  c.contract=n.trim();c.history.push(`${td()} — Contract attached by PIC team`);c.lastActivity=Date.now();
+  persist();toast('Contract attached');openDetail(id);
+}
+
+function advStage(){
+  const c=cases.find(x=>x.id===activeId);if(!c)return;
+  const idx=STAGES.indexOf(c.stage);
+  if(idx<STAGES.length-1){
+    c.stage=STAGES[idx+1];c.history.push(`${td()} — Advanced to: ${c.stage}`);c.lastActivity=Date.now();
+    persist();toast('Case moved to '+c.stage);rv();openDetail(activeId);
+  }
+}
+
+/* ═══════ NEW CASE ═══════ */
+function saveCase(){
+  const fn=document.getElementById('nc-fn').value.trim(),ln=document.getElementById('nc-ln').value.trim();
+  if(!fn||!ln){alert('Please enter client name.');return;}
+  const c={id:nid(),first:fn,last:ln,phone:document.getElementById('nc-ph').value,email:document.getElementById('nc-em').value,type:document.getElementById('nc-ty').value,source:document.getElementById('nc-sr').value,stage:'Lead',specialist:document.getElementById('nc-sp').value,lawyer:null,lawyerStatus:null,notes:document.getElementById('nc-nt').value,date:document.getElementById('nc-dt').value,created:Date.now(),lastActivity:Date.now(),history:[`${td()} — Lead created (manual entry)`],comments:[],contract:null,rejectionReason:null};
+  cases.unshift(c);persist();closeM('m-new-case');
+  ['nc-fn','nc-ln','nc-ph','nc-em','nc-nt','nc-dt'].forEach(id=>document.getElementById(id).value='');
+  toast('Case created');rv();
+}
+
+/* ═══════ MODAL HELPERS ═══════ */
+function openM(id){document.getElementById(id).classList.add('open');}
+function closeM(id){document.getElementById(id).classList.remove('open');}
+document.querySelectorAll('.mo').forEach(el=>el.addEventListener('click',e=>{if(e.target===el)el.classList.remove('open');}));
+
+/* ═══════ TOAST ═══════ */
+function toast(msg,warn=false){
+  const t=document.getElementById('toast'),ic=document.getElementById('ti');
+  document.getElementById('tm').textContent=msg;
+  ic.className=warn?'fa-solid fa-triangle-exclamation':'fa-solid fa-circle-check';
+  ic.style.color=warn?'var(--warn)':'var(--settled)';
+  t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3200);
+}
+</script>
+</body>
+</html>
