@@ -32,10 +32,9 @@ export async function updateSession(request: NextRequest) {
     return NextResponse.redirect(url)
   }
 
-  if (user && isAuthPage) {
-    url.pathname = '/dashboard'
-    return NextResponse.redirect(url)
-  }
+  // Don't redirect authenticated users away from login here —
+  // the dashboard layout handles profile checks and may need to
+  // sign the user out if their profile doesn't exist yet.
 
   return supabaseResponse
 }

@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase/server'
+import { createClient, createAdminClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { ROLE_LABELS, ROLE_COLORS, formatDate } from '@/lib/utils'
 import { cn } from '@/lib/utils'
@@ -7,13 +7,14 @@ import type { UserRole } from '@/types/database'
 
 export default async function UsersPage() {
   const supabase = await createClient()
+  const adminClient = await createAdminClient()
   const { data: { user } } = await supabase.auth.getUser()
-  const { data: profile } = await supabase.from('profiles').select('role').eq('id', user!.id).single()
+  const { data: profile } = await adminClient.from('profiles').select('role').eq('id', user!.id).single()
   if (profile?.role !== 'admin') redirect('/dashboard')
 
   const [{ data: users }, { data: invitations }] = await Promise.all([
-    supabase.from('profiles').select('*').order('created_at', { ascending: false }),
-    supabase.from('invitations').select('*').eq('accepted', false).order('created_at', { ascending: false }),
+    adminClient.from('profiles').select('*').order('created_at', { ascending: false }),
+    adminClient.from('invitations').select('*').eq('accepted', false).order('created_at', { ascending: false }),
   ])
 
   return (

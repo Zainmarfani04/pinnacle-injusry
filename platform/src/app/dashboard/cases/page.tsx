@@ -1,14 +1,15 @@
-import { createClient } from '@/lib/supabase/server'
+import { createClient, createAdminClient } from '@/lib/supabase/server'
 import { STATUS_LABELS, STATUS_COLORS, CASE_TYPE_LABELS, formatDate } from '@/lib/utils'
 import Link from 'next/link'
 import type { CaseStatus } from '@/types/database'
 
 export default async function CasesPage() {
   const supabase = await createClient()
+  const adminClient = await createAdminClient()
   const { data: { user } } = await supabase.auth.getUser()
-  const { data: profile } = await supabase.from('profiles').select('role').eq('id', user!.id).single()
+  const { data: profile } = await adminClient.from('profiles').select('role').eq('id', user!.id).single()
 
-  let query = supabase
+  let query = adminClient
     .from('cases')
     .select('*, client:profiles!cases_client_id_fkey(full_name, email), specialist:profiles!cases_assigned_specialist_id_fkey(full_name), lawyer:profiles!cases_assigned_lawyer_id_fkey(full_name)')
     .order('created_at', { ascending: false })

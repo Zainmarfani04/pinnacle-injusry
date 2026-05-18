@@ -1,5 +1,5 @@
 import { redirect } from 'next/navigation'
-import { createClient } from '@/lib/supabase/server'
+import { createClient, createAdminClient } from '@/lib/supabase/server'
 import Sidebar from '@/components/Sidebar'
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
@@ -7,13 +7,18 @@ export default async function DashboardLayout({ children }: { children: React.Re
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')
 
-  const { data: profile } = await supabase
+  // Use admin client to bypass RLS for the profile lookup
+  const adminClient = await createAdminClient()
+  const { data: profile, error: profileError } = await adminClient
     .from('profiles')
     .select('*')
     .eq('id', user.id)
     .single()
 
-  if (!profile) redirect('/login')
+  if (profileError || !profile) {
+    await supabase.auth.signOut()
+    redirect('/login?error=no_profile')
+  }
 
   if (profile.role === 'client') redirect('/portal')
 

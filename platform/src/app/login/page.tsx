@@ -1,13 +1,18 @@
 'use client'
 
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useState, Suspense } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 
-export default function LoginPage() {
+function LoginForm() {
+  const searchParams = useSearchParams()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [error, setError] = useState('')
+  const [error, setError] = useState(
+    searchParams.get('error') === 'no_profile'
+      ? 'Your account was found but has no profile. Please run the database schema in Supabase first, then insert your admin profile row.'
+      : ''
+  )
   const [loading, setLoading] = useState(false)
   const router = useRouter()
   const supabase = createClient()
@@ -113,4 +118,8 @@ export default function LoginPage() {
       </div>
     </div>
   )
+}
+
+export default function LoginPage() {
+  return <Suspense><LoginForm /></Suspense>
 }

@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase/server'
+import { createClient, createAdminClient } from '@/lib/supabase/server'
 import { notFound } from 'next/navigation'
 import { STATUS_LABELS, STATUS_COLORS, CASE_TYPE_LABELS, formatDate, formatCurrency, cn } from '@/lib/utils'
 import CaseDetailClient from './CaseDetailClient'
@@ -7,17 +7,18 @@ import type { CaseStatus } from '@/types/database'
 export default async function CaseDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
   const supabase = await createClient()
+  const adminClient = await createAdminClient()
   const { data: { user } } = await supabase.auth.getUser()
 
   const [{ data: caseData }, { data: notes }, { data: profile }] = await Promise.all([
-    supabase.from('cases').select(`
+    adminClient.from('cases').select(`
       *,
       client:profiles!cases_client_id_fkey(id, full_name, email, phone),
       specialist:profiles!cases_assigned_specialist_id_fkey(id, full_name, email),
       lawyer:profiles!cases_assigned_lawyer_id_fkey(id, full_name, email, firm_name)
     `).eq('id', id).single(),
-    supabase.from('case_notes').select('*, author:profiles!case_notes_author_id_fkey(full_name, role)').eq('case_id', id).order('created_at', { ascending: false }),
-    supabase.from('profiles').select('role').eq('id', user!.id).single(),
+    adminClient.from('case_notes').select('*, author:profiles!case_notes_author_id_fkey(full_name, role)').eq('case_id', id).order('created_at', { ascending: false }),
+    adminClient.from('profiles').select('role').eq('id', user!.id).single(),
   ])
 
   if (!caseData) notFound()

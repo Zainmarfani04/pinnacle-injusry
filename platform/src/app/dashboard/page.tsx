@@ -1,18 +1,19 @@
-import { createClient } from '@/lib/supabase/server'
+import { createClient, createAdminClient } from '@/lib/supabase/server'
 import { formatCurrency, STATUS_LABELS } from '@/lib/utils'
 import Link from 'next/link'
 
 export default async function DashboardPage() {
   const supabase = await createClient()
+  const adminClient = await createAdminClient()
   const { data: { user } } = await supabase.auth.getUser()
 
   const [{ data: cases }, { data: profile }, { count: totalClients }] = await Promise.all([
-    supabase.from('cases').select('*, client:profiles!cases_client_id_fkey(full_name)').order('created_at', { ascending: false }).limit(5),
-    supabase.from('profiles').select('*').eq('id', user!.id).single(),
-    supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('role', 'client'),
+    adminClient.from('cases').select('*, client:profiles!cases_client_id_fkey(full_name)').order('created_at', { ascending: false }).limit(5),
+    adminClient.from('profiles').select('*').eq('id', user!.id).single(),
+    adminClient.from('profiles').select('*', { count: 'exact', head: true }).eq('role', 'client'),
   ])
 
-  const { data: statusCounts } = await supabase
+  const { data: statusCounts } = await adminClient
     .from('cases')
     .select('status')
 
