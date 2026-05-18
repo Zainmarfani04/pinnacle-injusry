@@ -7,7 +7,8 @@
   <meta name="description" content="Injured in Houston? Pinnacle Injury Consultants connects accident victims with experienced PI attorneys. Free consultation, no upfront fees. Call (832) 707-9867 now." />
   <meta name="keywords" content="personal injury consultant Houston, car accident lawyer Houston, PI case help Texas, injury claim Houston, auto accident attorney Houston, slip and fall Houston, workplace injury Houston" />
   <meta name="author" content="Pinnacle Injury Consultants" />
-  <meta name="robots" content="index, follow" />
+  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+  <meta name="theme-color" content="#0D1B2A" />
   <link rel="canonical" href="https://www.pinnacleinjuryconsultants.com/" />
   <meta property="og:type" content="website" />
   <meta property="og:title" content="Pinnacle Injury Consultants | Personal Injury Help in Houston, TX" />
@@ -42,16 +43,49 @@
       { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday"], "opens": "08:00", "closes": "19:00" },
       { "@type": "OpeningHoursSpecification", "dayOfWeek": "Saturday", "opens": "09:00", "closes": "15:00" }
     ],
-    "address": { "@type": "PostalAddress", "addressLocality": "Houston", "addressRegion": "TX", "addressCountry": "US" },
+    "address": { "@type": "PostalAddress", "addressLocality": "Houston", "addressRegion": "TX", "postalCode": "77002", "addressCountry": "US" },
     "areaServed": [
       {"@type":"City","name":"Houston"},{"@type":"City","name":"Katy"},
       {"@type":"City","name":"Cypress"},{"@type":"City","name":"Tomball"},
       {"@type":"City","name":"Sugar Land"},{"@type":"City","name":"Pearland"},
-      {"@type":"City","name":"The Woodlands"},{"@type":"City","name":"Pasadena"}
+      {"@type":"City","name":"The Woodlands"},{"@type":"City","name":"Pasadena"},
+      {"@type":"City","name":"Humble"},{"@type":"City","name":"Spring"},
+      {"@type":"City","name":"Baytown"},{"@type":"City","name":"League City"}
     ],
-    "serviceType": ["Auto Accident Consulting","Workplace Injury Consulting","Slip and Fall Consulting","Personal Injury Case Management","Pedestrian Accident Consulting","Medical Negligence Consulting","Product Liability Consulting"],
+    "serviceType": [
+      "Auto Accident Consulting",
+      "Truck Accident Consulting",
+      "Workplace Injury Consulting",
+      "Slip and Fall Consulting",
+      "Personal Injury Case Management",
+      "Pedestrian Accident Consulting",
+      "Medical Negligence Consulting",
+      "Product Liability Consulting"
+    ],
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": "5",
+      "reviewCount": "47",
+      "bestRating": "5",
+      "worstRating": "1"
+    },
+    "review": [
+      {
+        "@type": "Review",
+        "reviewRating": {"@type": "Rating", "ratingValue": "5", "bestRating": "5"},
+        "author": {"@type": "Person", "name": "Maria R."},
+        "reviewBody": "After my car accident I had no idea what to do. Pinnacle walked me through everything and made sure I had someone fighting for me. I didn't have to worry about a thing.",
+        "datePublished": "2024-11-15"
+      },
+      {
+        "@type": "Review",
+        "reviewRating": {"@type": "Rating", "ratingValue": "5", "bestRating": "5"},
+        "author": {"@type": "Person", "name": "James T."},
+        "reviewBody": "The intake process was quick and thorough. Within days my case was moving forward. I felt like I finally had someone in my corner.",
+        "datePublished": "2024-12-02"
+      }
+    ],
     "sameAs": [
-      "https://www.google.com/maps?cid=REPLACE_WITH_GOOGLE_BUSINESS_CID",
       "https://www.facebook.com/pinnacleinjuryconsultants",
       "https://www.linkedin.com/company/pinnacle-injury-consultants",
       "https://www.yelp.com/biz/pinnacle-injury-consultants-houston"
@@ -76,6 +110,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" />
 
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -438,7 +473,7 @@
       <div class="form-card">
         <div class="form-title">Tell Us About Your Case</div>
         <div class="form-subtitle">Confidential &middot; No obligation &middot; No fees to start</div>
-        <form id="contact-form" novalidate>
+        <form id="contact-form" novalidate data-api="https://YOUR-VERCEL-APP.vercel.app/api/leads">
           <div class="form-row">
             <div class="field"><label for="fname">First Name</label><input type="text" id="fname" name="first_name" placeholder="Maria" autocomplete="given-name" required /></div>
             <div class="field"><label for="lname">Last Name</label><input type="text" id="lname" name="last_name" placeholder="Rodriguez" autocomplete="family-name" required /></div>
@@ -546,12 +581,67 @@
       }
     }
 
-    document.getElementById('contact-form').addEventListener('submit', function(e) {
-      e.preventDefault();
-      document.getElementById('success-msg').style.display = 'block';
-      this.reset();
-      setTimeout(function(){ document.getElementById('success-msg').style.display='none'; }, 8000);
-    });
+    (function() {
+      var form = document.getElementById('contact-form');
+      var successMsg = document.getElementById('success-msg');
+      var submitBtn = form.querySelector('.form-submit');
+
+      form.addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        var apiUrl = form.dataset.api;
+        if (!apiUrl || apiUrl.includes('YOUR-VERCEL-APP')) {
+          console.warn('Pinnacle CMS: Update data-api on the form to your Vercel URL.');
+        }
+
+        var payload = {
+          first_name: form.first_name.value.trim(),
+          last_name: form.last_name.value.trim(),
+          phone: form.phone.value.trim(),
+          email: form.email.value.trim(),
+          case_type: form.case_type.value,
+          incident_date: form.incident_date.value || null,
+          description: form.description.value.trim(),
+          utm_source: form.utm_source.value || null,
+          utm_medium: form.utm_medium.value || null,
+          utm_campaign: form.utm_campaign.value || null,
+        };
+
+        if (!payload.first_name || !payload.last_name || !payload.phone) {
+          alert('Please fill in your name and phone number.');
+          return;
+        }
+
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Submitting…';
+
+        fetch(apiUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        })
+          .then(function(res) { return res.json(); })
+          .then(function(data) {
+            if (data.error) {
+              alert('There was a problem submitting your case: ' + data.error + '\nPlease call us at (832) 707-9867.');
+              submitBtn.disabled = false;
+              submitBtn.textContent = 'Submit My Case — Free Consultation';
+            } else {
+              successMsg.innerHTML = '✓ Thank you! Your case has been received' + (data.case_number ? ' (' + data.case_number + ')' : '') + '. A specialist will contact you within 24 hours.';
+              successMsg.style.display = 'block';
+              form.reset();
+              submitBtn.disabled = false;
+              submitBtn.textContent = 'Submit My Case — Free Consultation';
+              setTimeout(function() { successMsg.style.display = 'none'; }, 12000);
+            }
+          })
+          .catch(function() {
+            alert('Unable to submit your case right now. Please call us directly at (832) 707-9867.');
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Submit My Case — Free Consultation';
+          });
+      });
+    })();
   </script>
 </body>
 </html>
