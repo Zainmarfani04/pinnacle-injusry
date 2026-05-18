@@ -1,20 +1,22 @@
 'use client'
 
 import { useState } from 'react'
+import { toast } from 'sonner'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog'
 
 export default function InviteUserButton() {
   const [open, setOpen] = useState(false)
   const [email, setEmail] = useState('')
   const [role, setRole] = useState('specialist')
   const [loading, setLoading] = useState(false)
-  const [success, setSuccess] = useState('')
-  const [error, setError] = useState('')
 
   async function handleInvite(e: React.FormEvent) {
     e.preventDefault()
     setLoading(true)
-    setError('')
-    setSuccess('')
 
     const res = await fetch('/api/invitations/send', {
       method: 'POST',
@@ -22,64 +24,74 @@ export default function InviteUserButton() {
       body: JSON.stringify({ email, role }),
     })
     const data = await res.json()
+
     if (data.error) {
-      setError(data.error)
+      toast.error(data.error)
     } else {
-      setSuccess(`Invitation sent to ${email}`)
+      toast.success(`Invitation sent to ${email}`)
       setEmail('')
       setRole('specialist')
+      setOpen(false)
     }
     setLoading(false)
   }
 
   return (
     <>
-      <button onClick={() => setOpen(true)}
-        className="px-4 py-2 rounded-lg bg-gradient-to-r from-[#c9a84c] to-[#e8c76a] text-[#0a0c10] text-sm font-semibold hover:opacity-90 transition-opacity"
-        style={{ fontFamily: 'var(--font-syne)' }}>
+      <Button
+        onClick={() => setOpen(true)}
+        className="bg-gradient-to-r from-[#c9a84c] to-[#e8c76a] text-[#0a0c10] font-semibold hover:opacity-90 border-0 font-[var(--font-syne)]"
+      >
         + Invite User
-      </button>
+      </Button>
 
-      {open && (
-        <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4" onClick={e => e.target === e.currentTarget && setOpen(false)}>
-          <div className="bg-[#161b25] border border-white/[0.13] rounded-xl w-full max-w-md">
-            <div className="flex items-center justify-between px-6 py-4 border-b border-white/[0.07]">
-              <h2 className="font-semibold text-sm" style={{ fontFamily: 'var(--font-syne)' }}>Invite New User</h2>
-              <button onClick={() => setOpen(false)} className="text-[#4e5668] hover:text-[#f0f2f7] text-lg leading-none">×</button>
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogContent className="bg-[#161b25] border-white/[0.13] text-[#f0f2f7] sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="font-[var(--font-syne)]">Invite New User</DialogTitle>
+          </DialogHeader>
+
+          <form onSubmit={handleInvite} className="space-y-4 py-2">
+            <div className="space-y-1.5">
+              <Label className="text-[#8d95a8] uppercase tracking-widest text-[11px]">Email Address</Label>
+              <Input
+                type="email"
+                value={email}
+                onChange={e => setEmail(e.target.value)}
+                required
+                placeholder="jane@lawfirm.com"
+                className="bg-white/[0.04] border-white/[0.13] text-[#f0f2f7] placeholder:text-[#4e5668] focus-visible:ring-[#c9a84c]"
+              />
             </div>
-            <form onSubmit={handleInvite} className="p-6 space-y-4">
-              {success && <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-lg px-4 py-3 text-sm text-emerald-400">{success}</div>}
-              {error && <div className="bg-red-500/10 border border-red-500/30 rounded-lg px-4 py-3 text-sm text-red-400">{error}</div>}
-              <div>
-                <label className="block text-[11px] font-medium uppercase tracking-widest text-[#8d95a8] mb-1.5">Email Address</label>
-                <input type="email" value={email} onChange={e => setEmail(e.target.value)} required placeholder="jane@lawfirm.com"
-                  className="w-full px-3.5 py-2.5 rounded-lg border border-white/[0.13] bg-white/[0.04] text-sm text-[#f0f2f7] placeholder-[#4e5668] outline-none focus:border-[#c9a84c] transition-colors" />
-              </div>
-              <div>
-                <label className="block text-[11px] font-medium uppercase tracking-widest text-[#8d95a8] mb-1.5">Role</label>
-                <select value={role} onChange={e => setRole(e.target.value)}
-                  className="w-full px-3.5 py-2.5 rounded-lg border border-white/[0.13] bg-[#0a0c10] text-sm text-[#f0f2f7] outline-none focus:border-[#c9a84c] transition-colors">
-                  <option value="specialist">Specialist (Internal)</option>
-                  <option value="lawyer">Lawyer</option>
-                  <option value="client">Client</option>
-                  <option value="admin">Admin</option>
-                </select>
-              </div>
-              <div className="flex gap-3 pt-2">
-                <button type="button" onClick={() => setOpen(false)}
-                  className="flex-1 py-2.5 rounded-lg border border-white/[0.13] text-sm text-[#8d95a8] hover:bg-white/[0.04] transition-colors">
-                  Cancel
-                </button>
-                <button type="submit" disabled={loading}
-                  className="flex-1 py-2.5 rounded-lg bg-gradient-to-r from-[#c9a84c] to-[#e8c76a] text-[#0a0c10] text-sm font-semibold disabled:opacity-60 hover:opacity-90 transition-opacity"
-                  style={{ fontFamily: 'var(--font-syne)' }}>
-                  {loading ? 'Sending…' : 'Send Invitation'}
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
+
+            <div className="space-y-1.5">
+              <Label className="text-[#8d95a8] uppercase tracking-widest text-[11px]">Role</Label>
+              <Select value={role} onValueChange={setRole}>
+                <SelectTrigger className="bg-white/[0.04] border-white/[0.13] text-[#f0f2f7] focus:ring-[#c9a84c]">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent className="bg-[#161b25] border-white/[0.13] text-[#f0f2f7]">
+                  <SelectItem value="specialist">Specialist (Internal)</SelectItem>
+                  <SelectItem value="lawyer">Lawyer</SelectItem>
+                  <SelectItem value="client">Client</SelectItem>
+                  <SelectItem value="admin">Admin</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <DialogFooter className="gap-2 pt-2">
+              <Button type="button" variant="outline" onClick={() => setOpen(false)}
+                className="border-white/[0.13] text-[#8d95a8] bg-transparent hover:bg-white/[0.04] hover:text-[#f0f2f7]">
+                Cancel
+              </Button>
+              <Button type="submit" disabled={loading}
+                className="bg-gradient-to-r from-[#c9a84c] to-[#e8c76a] text-[#0a0c10] font-semibold hover:opacity-90 border-0 font-[var(--font-syne)]">
+                {loading ? 'Sending…' : 'Send Invitation'}
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
     </>
   )
 }
