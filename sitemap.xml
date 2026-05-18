@@ -3,7 +3,7 @@
 
   <!-- Homepage -->
   <url>
-    <loc>https://www.pinnacleinjuryconsultants.com/</loc>
+    <loc>https://injurypinnacle.com/</loc>
     <lastmod>2025-05-18</lastmod>
     <changefreq>monthly</changefreq>
     <priority>1.0</priority>
@@ -11,19 +11,19 @@
 
   <!-- City Pages -->
   <url>
-    <loc>https://www.pinnacleinjuryconsultants.com/houston/</loc>
+    <loc>https://injurypinnacle.com/houston/</loc>
     <lastmod>2025-05-18</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://www.pinnacleinjuryconsultants.com/katy/</loc>
+    <loc>https://injurypinnacle.com/katy/</loc>
     <lastmod>2025-05-18</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://www.pinnacleinjuryconsultants.com/cypress/</loc>
+    <loc>https://injurypinnacle.com/cypress/</loc>
     <lastmod>2025-05-18</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
@@ -31,7 +31,7 @@
 
   <!-- Blog Index -->
   <url>
-    <loc>https://www.pinnacleinjuryconsultants.com/blog/</loc>
+    <loc>https://injurypinnacle.com/blog/</loc>
     <lastmod>2025-05-18</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
@@ -39,13 +39,13 @@
 
   <!-- Blog Articles -->
   <url>
-    <loc>https://www.pinnacleinjuryconsultants.com/blog/car-accident-steps-houston/</loc>
+    <loc>https://injurypinnacle.com/blog/car-accident-steps-houston/</loc>
     <lastmod>2025-05-18</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://www.pinnacleinjuryconsultants.com/blog/consultant-vs-lawyer-texas/</loc>
+    <loc>https://injurypinnacle.com/blog/consultant-vs-lawyer-texas/</loc>
     <lastmod>2025-05-18</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
