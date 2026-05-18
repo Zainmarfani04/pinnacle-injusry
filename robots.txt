@@ -1,0 +1,11 @@
+# Pinnacle Injury Consultants — robots.txt
+
+User-agent: *
+Allow: /
+
+# Disallow any future admin or API paths
+Disallow: /api/
+Disallow: /admin/
+
+# Sitemap location
+Sitemap: https://www.pinnacleinjuryconsultants.com/sitemap.xml
