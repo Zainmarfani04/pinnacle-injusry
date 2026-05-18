@@ -3,6 +3,12 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Textarea } from '@/components/ui/textarea'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import type { Profile } from '@/types/database'
 
 export default function NewCasePage() {
@@ -58,99 +64,146 @@ export default function NewCasePage() {
     router.push(`/dashboard/cases/${data.data.id}`)
   }
 
-  const inputCls = 'w-full px-3.5 py-2.5 rounded-lg border border-white/[0.13] bg-white/[0.04] text-sm text-[#f0f2f7] placeholder-[#4e5668] outline-none focus:border-[#c9a84c] transition-colors'
-  const selectCls = 'w-full px-3.5 py-2.5 rounded-lg border border-white/[0.13] bg-[#0a0c10] text-sm text-[#f0f2f7] outline-none focus:border-[#c9a84c] transition-colors'
-  const labelCls = 'block text-[11px] font-medium uppercase tracking-widest text-[#8d95a8] mb-1.5'
+  const labelCls = 'text-[#8d95a8] uppercase tracking-widest text-[11px]'
 
   return (
-    <div className="p-6 max-w-3xl">
-      <div className="mb-6">
+    <div className="p-6 max-w-3xl space-y-6">
+      <div>
         <button onClick={() => router.back()} className="text-sm text-[#8d95a8] hover:text-[#f0f2f7] transition-colors mb-3">← Back</button>
-        <h1 className="text-xl font-bold" style={{ fontFamily: 'var(--font-syne)' }}>New Case</h1>
+        <h1 className="text-xl font-bold font-[var(--font-syne)]">New Case</h1>
       </div>
 
-      {error && <div className="bg-red-500/10 border border-red-500/30 rounded-lg px-4 py-3 text-sm text-red-400 mb-5">{error}</div>}
+      {error && (
+        <div className="bg-red-500/10 border border-red-500/30 rounded-lg px-4 py-3 text-sm text-red-400">{error}</div>
+      )}
 
-      <form onSubmit={handleSubmit} className="space-y-6">
-        <div className="bg-[#161b25] border border-white/[0.07] rounded-xl p-5">
-          <h2 className="text-sm font-semibold mb-4" style={{ fontFamily: 'var(--font-syne)' }}>Assignment</h2>
-          <div className="grid grid-cols-3 gap-4">
-            <div><label className={labelCls}>Client *</label>
-              <select value={form.client_id} onChange={e => set('client_id', e.target.value)} required className={selectCls}>
-                <option value="">Select client…</option>
-                {clients.map(c => <option key={c.id} value={c.id}>{c.full_name}</option>)}
-              </select>
+      <form onSubmit={handleSubmit} className="space-y-5">
+        <Card className="bg-[#161b25] border-white/[0.07]">
+          <CardHeader><CardTitle className="text-sm font-[var(--font-syne)]">Assignment</CardTitle></CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-3 gap-4">
+              <div className="space-y-1.5">
+                <Label className={labelCls}>Client *</Label>
+                <Select value={form.client_id} onValueChange={v => set('client_id', v)} required>
+                  <SelectTrigger className="bg-white/[0.04] border-white/[0.13] text-[#f0f2f7] focus:ring-[#c9a84c]">
+                    <SelectValue placeholder="Select client…" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-[#161b25] border-white/[0.13] text-[#f0f2f7]">
+                    {clients.map(c => <SelectItem key={c.id} value={c.id}>{c.full_name}</SelectItem>)}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-1.5">
+                <Label className={labelCls}>Specialist</Label>
+                <Select value={form.assigned_specialist_id} onValueChange={v => set('assigned_specialist_id', v)}>
+                  <SelectTrigger className="bg-white/[0.04] border-white/[0.13] text-[#f0f2f7] focus:ring-[#c9a84c]">
+                    <SelectValue placeholder="Unassigned" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-[#161b25] border-white/[0.13] text-[#f0f2f7]">
+                    {specialists.map(s => <SelectItem key={s.id} value={s.id}>{s.full_name}</SelectItem>)}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-1.5">
+                <Label className={labelCls}>Lawyer</Label>
+                <Select value={form.assigned_lawyer_id} onValueChange={v => set('assigned_lawyer_id', v)}>
+                  <SelectTrigger className="bg-white/[0.04] border-white/[0.13] text-[#f0f2f7] focus:ring-[#c9a84c]">
+                    <SelectValue placeholder="Unassigned" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-[#161b25] border-white/[0.13] text-[#f0f2f7]">
+                    {lawyers.map(l => <SelectItem key={l.id} value={l.id}>{l.full_name}</SelectItem>)}
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
-            <div><label className={labelCls}>Specialist</label>
-              <select value={form.assigned_specialist_id} onChange={e => set('assigned_specialist_id', e.target.value)} className={selectCls}>
-                <option value="">Unassigned</option>
-                {specialists.map(s => <option key={s.id} value={s.id}>{s.full_name}</option>)}
-              </select>
-            </div>
-            <div><label className={labelCls}>Lawyer</label>
-              <select value={form.assigned_lawyer_id} onChange={e => set('assigned_lawyer_id', e.target.value)} className={selectCls}>
-                <option value="">Unassigned</option>
-                {lawyers.map(l => <option key={l.id} value={l.id}>{l.full_name}</option>)}
-              </select>
-            </div>
-          </div>
-        </div>
+          </CardContent>
+        </Card>
 
-        <div className="bg-[#161b25] border border-white/[0.07] rounded-xl p-5">
-          <h2 className="text-sm font-semibold mb-4" style={{ fontFamily: 'var(--font-syne)' }}>Case Details</h2>
-          <div className="grid grid-cols-2 gap-4">
-            <div><label className={labelCls}>Case Type</label>
-              <select value={form.case_type} onChange={e => set('case_type', e.target.value)} className={selectCls}>
-                <option value="auto_accident">Auto Accident</option>
-                <option value="slip_and_fall">Slip & Fall</option>
-                <option value="workplace_injury">Workplace Injury</option>
-                <option value="medical_malpractice">Medical Malpractice</option>
-                <option value="other">Other</option>
-              </select>
+        <Card className="bg-[#161b25] border-white/[0.07]">
+          <CardHeader><CardTitle className="text-sm font-[var(--font-syne)]">Case Details</CardTitle></CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-1.5">
+                <Label className={labelCls}>Case Type</Label>
+                <Select value={form.case_type} onValueChange={v => set('case_type', v)}>
+                  <SelectTrigger className="bg-white/[0.04] border-white/[0.13] text-[#f0f2f7] focus:ring-[#c9a84c]">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent className="bg-[#161b25] border-white/[0.13] text-[#f0f2f7]">
+                    <SelectItem value="auto_accident">Auto Accident</SelectItem>
+                    <SelectItem value="slip_and_fall">Slip &amp; Fall</SelectItem>
+                    <SelectItem value="workplace_injury">Workplace Injury</SelectItem>
+                    <SelectItem value="medical_malpractice">Medical Malpractice</SelectItem>
+                    <SelectItem value="other">Other</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-1.5">
+                <Label className={labelCls}>Incident Date</Label>
+                <Input type="date" value={form.incident_date} onChange={e => set('incident_date', e.target.value)}
+                  className="bg-white/[0.04] border-white/[0.13] text-[#f0f2f7] focus-visible:ring-[#c9a84c]" />
+              </div>
+              <div className="col-span-2 space-y-1.5">
+                <Label className={labelCls}>Accident Location</Label>
+                <Input value={form.accident_location} onChange={e => set('accident_location', e.target.value)}
+                  placeholder="123 Main St, Houston TX"
+                  className="bg-white/[0.04] border-white/[0.13] text-[#f0f2f7] placeholder:text-[#4e5668] focus-visible:ring-[#c9a84c]" />
+              </div>
+              <div className="col-span-2 space-y-1.5">
+                <Label className={labelCls}>Description</Label>
+                <Textarea value={form.description} onChange={e => set('description', e.target.value)}
+                  rows={3} placeholder="Brief description of the incident…"
+                  className="bg-white/[0.04] border-white/[0.13] text-[#f0f2f7] placeholder:text-[#4e5668] focus-visible:ring-[#c9a84c] resize-none" />
+              </div>
+              <div className="col-span-2 space-y-1.5">
+                <Label className={labelCls}>Injuries</Label>
+                <Textarea value={form.injuries} onChange={e => set('injuries', e.target.value)}
+                  rows={2} placeholder="Describe the injuries sustained…"
+                  className="bg-white/[0.04] border-white/[0.13] text-[#f0f2f7] placeholder:text-[#4e5668] focus-visible:ring-[#c9a84c] resize-none" />
+              </div>
             </div>
-            <div><label className={labelCls}>Incident Date</label>
-              <input type="date" value={form.incident_date} onChange={e => set('incident_date', e.target.value)} className={inputCls} />
-            </div>
-            <div className="col-span-2"><label className={labelCls}>Accident Location</label>
-              <input type="text" value={form.accident_location} onChange={e => set('accident_location', e.target.value)} placeholder="123 Main St, Houston TX" className={inputCls} />
-            </div>
-            <div className="col-span-2"><label className={labelCls}>Description</label>
-              <textarea value={form.description} onChange={e => set('description', e.target.value)} rows={3} placeholder="Brief description of the incident…" className={inputCls} />
-            </div>
-            <div className="col-span-2"><label className={labelCls}>Injuries</label>
-              <textarea value={form.injuries} onChange={e => set('injuries', e.target.value)} rows={2} placeholder="Describe the injuries sustained…" className={inputCls} />
-            </div>
-          </div>
-        </div>
+          </CardContent>
+        </Card>
 
-        <div className="bg-[#161b25] border border-white/[0.07] rounded-xl p-5">
-          <h2 className="text-sm font-semibold mb-4" style={{ fontFamily: 'var(--font-syne)' }}>Additional Info</h2>
-          <div className="grid grid-cols-2 gap-4">
-            <div><label className={labelCls}>Medical Provider</label>
-              <input type="text" value={form.medical_provider} onChange={e => set('medical_provider', e.target.value)} placeholder="Houston Medical Center" className={inputCls} />
+        <Card className="bg-[#161b25] border-white/[0.07]">
+          <CardHeader><CardTitle className="text-sm font-[var(--font-syne)]">Additional Info</CardTitle></CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-1.5">
+                <Label className={labelCls}>Medical Provider</Label>
+                <Input value={form.medical_provider} onChange={e => set('medical_provider', e.target.value)}
+                  placeholder="Houston Medical Center"
+                  className="bg-white/[0.04] border-white/[0.13] text-[#f0f2f7] placeholder:text-[#4e5668] focus-visible:ring-[#c9a84c]" />
+              </div>
+              <div className="space-y-1.5">
+                <Label className={labelCls}>Estimated Value ($)</Label>
+                <Input type="number" value={form.estimated_value} onChange={e => set('estimated_value', e.target.value)}
+                  placeholder="50000"
+                  className="bg-white/[0.04] border-white/[0.13] text-[#f0f2f7] placeholder:text-[#4e5668] focus-visible:ring-[#c9a84c]" />
+              </div>
+              <div className="space-y-1.5">
+                <Label className={labelCls}>Police Report #</Label>
+                <Input value={form.police_report_number} onChange={e => set('police_report_number', e.target.value)}
+                  className="bg-white/[0.04] border-white/[0.13] text-[#f0f2f7] focus-visible:ring-[#c9a84c]" />
+              </div>
+              <div className="space-y-1.5">
+                <Label className={labelCls}>Insurance Claim #</Label>
+                <Input value={form.insurance_claim_number} onChange={e => set('insurance_claim_number', e.target.value)}
+                  className="bg-white/[0.04] border-white/[0.13] text-[#f0f2f7] focus-visible:ring-[#c9a84c]" />
+              </div>
             </div>
-            <div><label className={labelCls}>Estimated Value ($)</label>
-              <input type="number" value={form.estimated_value} onChange={e => set('estimated_value', e.target.value)} placeholder="50000" className={inputCls} />
-            </div>
-            <div><label className={labelCls}>Police Report #</label>
-              <input type="text" value={form.police_report_number} onChange={e => set('police_report_number', e.target.value)} className={inputCls} />
-            </div>
-            <div><label className={labelCls}>Insurance Claim #</label>
-              <input type="text" value={form.insurance_claim_number} onChange={e => set('insurance_claim_number', e.target.value)} className={inputCls} />
-            </div>
-          </div>
-        </div>
+          </CardContent>
+        </Card>
 
         <div className="flex gap-3">
-          <button type="button" onClick={() => router.back()}
-            className="px-5 py-2.5 rounded-lg border border-white/[0.13] text-sm text-[#8d95a8] hover:bg-white/[0.04] transition-colors">
+          <Button type="button" variant="outline" onClick={() => router.back()}
+            className="border-white/[0.13] text-[#8d95a8] bg-transparent hover:bg-white/[0.04] hover:text-[#f0f2f7]">
             Cancel
-          </button>
-          <button type="submit" disabled={loading}
-            className="px-6 py-2.5 rounded-lg bg-gradient-to-r from-[#c9a84c] to-[#e8c76a] text-[#0a0c10] text-sm font-semibold disabled:opacity-60 hover:opacity-90 transition-opacity"
-            style={{ fontFamily: 'var(--font-syne)' }}>
+          </Button>
+          <Button type="submit" disabled={loading}
+            className="bg-gradient-to-r from-[#c9a84c] to-[#e8c76a] text-[#0a0c10] font-semibold hover:opacity-90 border-0 font-[var(--font-syne)]">
             {loading ? 'Creating…' : 'Create Case'}
-          </button>
+          </Button>
         </div>
       </form>
     </div>

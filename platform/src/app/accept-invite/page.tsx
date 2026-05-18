@@ -3,6 +3,10 @@
 import { useState, useEffect, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 
 function AcceptInviteForm() {
   const [fullName, setFullName] = useState('')
@@ -48,17 +52,19 @@ function AcceptInviteForm() {
   }
 
   if (checking) return (
-    <div className="min-h-screen flex items-center justify-center">
+    <div className="min-h-screen flex items-center justify-center bg-[#0a0c10]">
       <div className="w-6 h-6 border-2 border-[#c9a84c] border-t-transparent rounded-full animate-spin" />
     </div>
   )
 
+  const labelCls = 'text-[#8d95a8] uppercase tracking-widest text-[11px]'
+
   return (
-    <div className="min-h-screen flex items-center justify-center p-8">
+    <div className="min-h-screen flex items-center justify-center p-8 bg-[#0a0c10]">
       <div className="w-full max-w-sm">
         <div className="flex items-center gap-3 mb-10">
           <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-[#c9a84c] to-[#e8c76a] flex items-center justify-center text-[#0a0c10] font-bold text-sm">P</div>
-          <span className="font-semibold text-sm" style={{ fontFamily: 'var(--font-syne)' }}>Pinnacle Case Management</span>
+          <span className="font-semibold text-sm font-[var(--font-syne)]">Pinnacle Case Management</span>
         </div>
 
         {error && !invitation ? (
@@ -66,40 +72,44 @@ function AcceptInviteForm() {
             {error}
           </div>
         ) : (
-          <>
-            <h1 className="text-2xl font-bold mb-1.5" style={{ fontFamily: 'var(--font-syne)' }}>Set up your account</h1>
-            <p className="text-sm text-[#8d95a8] mb-2">
-              You were invited as <span className="text-[#f0f2f7] font-medium capitalize">{invitation?.role}</span>
-            </p>
-            <p className="text-xs text-[#4e5668] mb-8">{invitation?.email}</p>
+          <Card className="bg-[#161b25] border-white/[0.07] shadow-2xl">
+            <CardHeader className="pb-4">
+              <CardTitle className="text-2xl font-[var(--font-syne)]">Set up your account</CardTitle>
+              <CardDescription className="text-[#8d95a8]">
+                Invited as <span className="text-[#f0f2f7] font-medium capitalize">{invitation?.role}</span>
+                {' · '}{invitation?.email}
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              {error && (
+                <div className="bg-red-500/10 border border-red-500/30 rounded-lg px-4 py-3 text-sm text-red-400 mb-5">{error}</div>
+              )}
 
-            {error && (
-              <div className="bg-red-500/10 border border-red-500/30 rounded-lg px-4 py-3 text-sm text-red-400 mb-5">{error}</div>
-            )}
-
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div>
-                <label className="block text-[11px] font-medium uppercase tracking-widest text-[#8d95a8] mb-1.5">Full Name</label>
-                <input type="text" value={fullName} onChange={e => setFullName(e.target.value)} placeholder="Jane Smith" required
-                  className="w-full px-3.5 py-2.5 rounded-lg border border-white/[0.13] bg-white/[0.04] text-sm text-[#f0f2f7] placeholder-[#4e5668] outline-none focus:border-[#c9a84c] transition-colors" />
-              </div>
-              <div>
-                <label className="block text-[11px] font-medium uppercase tracking-widest text-[#8d95a8] mb-1.5">Phone (for SMS alerts)</label>
-                <input type="tel" value={phone} onChange={e => setPhone(e.target.value)} placeholder="+1 (555) 000-0000"
-                  className="w-full px-3.5 py-2.5 rounded-lg border border-white/[0.13] bg-white/[0.04] text-sm text-[#f0f2f7] placeholder-[#4e5668] outline-none focus:border-[#c9a84c] transition-colors" />
-              </div>
-              <div>
-                <label className="block text-[11px] font-medium uppercase tracking-widest text-[#8d95a8] mb-1.5">Create Password</label>
-                <input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="At least 8 characters" required minLength={8}
-                  className="w-full px-3.5 py-2.5 rounded-lg border border-white/[0.13] bg-white/[0.04] text-sm text-[#f0f2f7] placeholder-[#4e5668] outline-none focus:border-[#c9a84c] transition-colors" />
-              </div>
-              <button type="submit" disabled={loading}
-                className="w-full py-2.5 rounded-lg bg-gradient-to-r from-[#c9a84c] to-[#e8c76a] text-[#0a0c10] font-semibold text-sm tracking-wide disabled:opacity-60 hover:opacity-90 transition-opacity"
-                style={{ fontFamily: 'var(--font-syne)' }}>
-                {loading ? 'Creating account…' : 'Create Account & Sign In'}
-              </button>
-            </form>
-          </>
+              <form onSubmit={handleSubmit} className="space-y-4">
+                <div className="space-y-1.5">
+                  <Label className={labelCls}>Full Name</Label>
+                  <Input type="text" value={fullName} onChange={e => setFullName(e.target.value)}
+                    placeholder="Jane Smith" required
+                    className="bg-white/[0.04] border-white/[0.13] text-[#f0f2f7] placeholder:text-[#4e5668] focus-visible:ring-[#c9a84c]" />
+                </div>
+                <div className="space-y-1.5">
+                  <Label className={labelCls}>Phone (for SMS alerts)</Label>
+                  <Input type="tel" value={phone} onChange={e => setPhone(e.target.value)}
+                    placeholder="+1 (555) 000-0000"
+                    className="bg-white/[0.04] border-white/[0.13] text-[#f0f2f7] placeholder:text-[#4e5668] focus-visible:ring-[#c9a84c]" />
+                </div>
+                <div className="space-y-1.5">
+                  <Label className={labelCls}>Create Password</Label>
+                  <Input type="password" value={password} onChange={e => setPassword(e.target.value)}
+                    placeholder="At least 8 characters" required minLength={8}
+                    className="bg-white/[0.04] border-white/[0.13] text-[#f0f2f7] placeholder:text-[#4e5668] focus-visible:ring-[#c9a84c]" />
+                </div>
+                <Button type="submit" disabled={loading} className="w-full bg-gradient-to-r from-[#c9a84c] to-[#e8c76a] text-[#0a0c10] font-semibold hover:opacity-90 border-0 font-[var(--font-syne)]">
+                  {loading ? 'Creating account…' : 'Create Account & Sign In'}
+                </Button>
+              </form>
+            </CardContent>
+          </Card>
         )}
       </div>
     </div>

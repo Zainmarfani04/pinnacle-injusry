@@ -1,9 +1,19 @@
 import { createAdminClient, createClient } from '@/lib/supabase/server'
-import { STATUS_LABELS, STATUS_COLORS, cn } from '@/lib/utils'
+import { STATUS_LABELS } from '@/lib/utils'
+import { Card, CardContent } from '@/components/ui/card'
 import Link from 'next/link'
 import type { CaseStatus } from '@/types/database'
 
 const PIPELINE_STAGES: CaseStatus[] = ['lead', 'intake', 'sent_to_attorney', 'accepted', 'signed', 'settled']
+
+const stageColors: Record<string, string> = {
+  lead: 'bg-blue-500',
+  intake: 'bg-amber-500',
+  sent_to_attorney: 'bg-purple-500',
+  accepted: 'bg-emerald-500',
+  signed: 'bg-violet-500',
+  settled: 'bg-emerald-400',
+}
 
 export default async function PipelinePage() {
   const supabase = await createClient()
@@ -20,20 +30,11 @@ export default async function PipelinePage() {
     return acc
   }, {} as Record<string, any[]>)
 
-  const stageColors: Record<string, string> = {
-    lead: 'bg-blue-500',
-    intake: 'bg-amber-500',
-    sent_to_attorney: 'bg-purple-500',
-    accepted: 'bg-emerald-500',
-    signed: 'bg-violet-500',
-    settled: 'bg-emerald-400',
-  }
-
   return (
     <div className="p-6 h-full flex flex-col">
       <div className="mb-5">
-        <h1 className="text-xl font-bold" style={{ fontFamily: 'var(--font-syne)' }}>Pipeline</h1>
-        <p className="text-sm text-[#8d95a8] mt-1">Drag-and-drop view of all active cases by stage.</p>
+        <h1 className="text-xl font-bold font-[var(--font-syne)]">Pipeline</h1>
+        <p className="text-sm text-[#8d95a8] mt-1">Case stages across the full lifecycle.</p>
       </div>
 
       <div className="flex gap-3 overflow-x-auto pb-4 flex-1">
@@ -55,15 +56,18 @@ export default async function PipelinePage() {
 
             <div className="flex flex-col gap-2 flex-1">
               {byStatus[status]?.map((c: any) => (
-                <Link key={c.id} href={`/dashboard/cases/${c.id}`}
-                  className="bg-[#161b25] border border-white/[0.07] rounded-lg p-3 hover:border-white/[0.15] transition-colors block">
-                  <div className="text-xs font-mono text-[#c9a84c] mb-1">{c.case_number}</div>
-                  <div className="text-sm font-medium text-[#f0f2f7] mb-1 truncate">
-                    {c.client?.full_name ?? '—'}
-                  </div>
-                  <div className="text-[11px] text-[#4e5668] capitalize">
-                    {c.case_type?.replace(/_/g, ' ')}
-                  </div>
+                <Link key={c.id} href={`/dashboard/cases/${c.id}`}>
+                  <Card className="bg-[#161b25] border-white/[0.07] hover:border-white/[0.15] transition-colors">
+                    <CardContent className="p-3">
+                      <div className="text-xs font-mono text-[#c9a84c] mb-1">{c.case_number}</div>
+                      <div className="text-sm font-medium text-[#f0f2f7] mb-1 truncate">
+                        {c.client?.full_name ?? '—'}
+                      </div>
+                      <div className="text-[11px] text-[#4e5668] capitalize">
+                        {c.case_type?.replace(/_/g, ' ')}
+                      </div>
+                    </CardContent>
+                  </Card>
                 </Link>
               ))}
               {!byStatus[status]?.length && (
