@@ -1,0 +1,128 @@
+/* ── PINNACLE INJURY CONSULTANTS — Shared Stylesheet ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:       #F7F4EF;
+  --bg-warm:  #EFEBE3;
+  --white:    #FFFFFF;
+  --ink:      #0F0F0F;
+  --ink-mid:  #2A2A2A;
+  --muted:    #6B6560;
+  --gold:     #C4922A;
+  --gold-lt:  #E8B84B;
+  --gold-bg:  #FDF6E9;
+  --rule:     rgba(15,15,15,0.1);
+  --navy:     #0D1B2A;
+}
+
+html { scroll-behavior: smooth; }
+body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--ink); overflow-x: hidden; }
+a { text-decoration: none; color: inherit; }
+img { max-width: 100%; height: auto; }
+
+/* ── NAV ── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 5%; height: 68px;
+  background: rgba(247,244,239,0.96);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--rule);
+}
+.nav-brand { display: flex; flex-direction: column; gap: 1px; }
+.nav-brand .wordmark { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 16px; font-weight: 700; color: var(--ink); letter-spacing: 0.01em; }
+.nav-brand .tagline { font-size: 9px; letter-spacing: 0.2em; color: var(--muted); text-transform: uppercase; }
+.nav-center { display: flex; gap: 32px; align-items: center; }
+.nav-center a { font-size: 12px; letter-spacing: 0.07em; text-transform: uppercase; color: var(--muted); font-weight: 500; transition: color 0.2s; }
+.nav-center a:hover, .nav-center a.active { color: var(--ink); }
+.nav-right { display: flex; align-items: center; gap: 14px; }
+.nav-phone { display: flex; align-items: center; gap: 7px; color: var(--gold); font-size: 14px; font-weight: 600; transition: color 0.2s; }
+.nav-phone:hover { color: var(--ink); }
+.nav-cta { background: var(--ink); color: var(--white); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 600; padding: 10px 22px; transition: background 0.2s; display: inline-block; }
+.nav-cta:hover { background: var(--gold); }
+
+/* ── BUTTONS ── */
+.btn-primary { background: var(--gold); color: var(--white); font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 600; padding: 16px 36px; border: none; cursor: pointer; transition: background 0.2s, transform 0.2s; display: inline-block; }
+.btn-primary:hover { background: var(--ink); transform: translateY(-2px); }
+.btn-call { display: flex; align-items: center; gap: 10px; border: 1.5px solid var(--ink); color: var(--ink); padding: 14px 28px; font-size: 14px; font-weight: 500; transition: all 0.2s; }
+.btn-call:hover { background: var(--ink); color: var(--white); }
+
+/* ── SECTION LABELS ── */
+.section-label { font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--gold); margin-bottom: 16px; font-weight: 600; display: flex; align-items: center; gap: 10px; }
+.section-label::before { content: ''; display: inline-block; width: 24px; height: 2px; background: var(--gold); }
+h2.section-title { font-family: 'Plus Jakarta Sans', sans-serif; font-size: clamp(30px, 3.5vw, 48px); font-weight: 800; color: var(--ink); line-height: 1.05; margin-bottom: 16px; letter-spacing: -0.02em; }
+h3.section-title { font-family: 'Plus Jakarta Sans', sans-serif; font-size: clamp(22px, 2.5vw, 34px); font-weight: 700; color: var(--ink); line-height: 1.1; margin-bottom: 12px; letter-spacing: -0.01em; }
+.section-sub { font-size: 16px; line-height: 1.75; color: var(--muted); max-width: 520px; font-weight: 300; }
+
+/* ── TRUST BAR ── */
+.trust-bar { background: var(--gold-bg); border-top: 1px solid rgba(196,146,42,0.2); border-bottom: 1px solid rgba(196,146,42,0.2); padding: 16px 5%; display: flex; align-items: center; gap: 12px; justify-content: center; flex-wrap: wrap; }
+.trust-bar p { font-size: 13px; color: var(--ink-mid); text-align: center; }
+.trust-bar strong { color: var(--gold); }
+.trust-bar a { color: var(--gold); font-weight: 600; border-bottom: 1px solid rgba(196,146,42,0.4); }
+
+/* ── CTA BANNER ── */
+.cta-banner { background: var(--ink); padding: 72px 7%; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 40px; }
+.cta-eyebrow { font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--gold); margin-bottom: 16px; font-weight: 600; display: flex; align-items: center; gap: 10px; }
+.cta-eyebrow::before { content: ''; display: inline-block; width: 24px; height: 2px; background: var(--gold); }
+.cta-banner h2 { font-family: 'Plus Jakarta Sans', sans-serif; font-size: clamp(26px, 3vw, 42px); font-weight: 800; color: var(--white); margin-bottom: 8px; letter-spacing: -0.02em; line-height: 1.05; }
+.cta-banner p { font-size: 15px; color: rgba(255,255,255,0.45); font-weight: 300; }
+.cta-banner-actions { display: flex; gap: 14px; align-items: center; flex-wrap: wrap; }
+.cta-call-btn { display: flex; align-items: center; gap: 10px; background: var(--gold); color: var(--white); font-size: 14px; font-weight: 600; padding: 18px 36px; transition: background 0.2s, transform 0.2s; }
+.cta-call-btn:hover { background: var(--gold-lt); transform: translateY(-2px); }
+.btn-secondary { border: 1px solid rgba(255,255,255,0.25); color: rgba(255,255,255,0.7); padding: 16px 32px; font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 500; transition: all 0.2s; display: inline-block; }
+.btn-secondary:hover { background: rgba(255,255,255,0.07); color: var(--white); }
+
+/* ── CONTACT FORM ── */
+.form-card { background: var(--bg); border: 1px solid var(--rule); padding: 48px 44px; }
+.form-title { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 24px; font-weight: 800; color: var(--ink); margin-bottom: 6px; }
+.form-subtitle { font-size: 13px; color: var(--muted); font-weight: 300; margin-bottom: 28px; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.field { margin-bottom: 16px; }
+.field label { display: block; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; font-weight: 600; }
+.field input, .field select, .field textarea { width: 100%; background: var(--white); border: 1px solid rgba(15,15,15,0.15); color: var(--ink); padding: 12px 14px; font-family: 'Outfit', sans-serif; font-size: 14px; outline: none; transition: border-color 0.2s; }
+.field input:focus, .field select:focus, .field textarea:focus { border-color: var(--gold); }
+.field input::placeholder, .field textarea::placeholder { color: rgba(15,15,15,0.3); }
+.field select { appearance: none; cursor: pointer; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236B6560' stroke-width='1.5' fill='none'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 36px; }
+.field textarea { resize: vertical; min-height: 100px; }
+.form-submit { width: 100%; background: var(--ink); color: var(--white); border: none; padding: 16px; font-family: 'Outfit', sans-serif; font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; font-weight: 600; cursor: pointer; margin-top: 8px; transition: background 0.2s; }
+.form-submit:hover { background: var(--gold); }
+.form-disclaimer { font-size: 11px; color: var(--muted); margin-top: 14px; line-height: 1.6; text-align: center; opacity: 0.65; }
+.success-msg { display: none; background: rgba(34,197,94,0.08); border: 1px solid rgba(34,197,94,0.3); color: #15803d; padding: 16px; font-size: 14px; text-align: center; margin-top: 16px; }
+
+/* ── FOOTER ── */
+footer { background: var(--ink); border-top: 1px solid rgba(255,255,255,0.06); padding: 64px 7% 40px; }
+.footer-top { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 48px; margin-bottom: 48px; padding-bottom: 48px; border-bottom: 1px solid rgba(255,255,255,0.07); }
+.footer-brand .wordmark { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 18px; color: var(--white); font-weight: 700; }
+.footer-brand .sub { font-size: 10px; color: rgba(255,255,255,0.3); letter-spacing: 0.12em; text-transform: uppercase; margin-top: 4px; }
+.footer-brand .footer-tagline { font-size: 13px; color: rgba(255,255,255,0.4); margin-top: 16px; max-width: 260px; line-height: 1.65; font-weight: 300; }
+.footer-col h4 { font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: rgba(255,255,255,0.35); margin-bottom: 18px; font-weight: 600; }
+.footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+.footer-col ul li a { font-size: 13px; color: rgba(255,255,255,0.5); transition: color 0.2s; }
+.footer-col ul li a:hover { color: var(--gold-lt); }
+.footer-phone { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 20px; color: var(--gold-lt); font-weight: 700; display: block; margin-bottom: 10px; }
+.footer-phone:hover { color: var(--white); }
+.footer-bottom { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
+.footer-bottom p { font-size: 12px; color: rgba(255,255,255,0.2); line-height: 1.7; }
+.footer-legal { display: flex; gap: 20px; }
+.footer-legal a { font-size: 12px; color: rgba(255,255,255,0.25); transition: color 0.2s; }
+.footer-legal a:hover { color: rgba(255,255,255,0.6); }
+
+/* ── BREADCRUMB ── */
+.breadcrumb { padding: 92px 7% 0; display: flex; gap: 8px; align-items: center; font-size: 12px; color: var(--muted); flex-wrap: wrap; }
+.breadcrumb a { color: var(--gold); transition: color 0.2s; }
+.breadcrumb a:hover { color: var(--ink); }
+.breadcrumb span { color: var(--muted); }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 768px) {
+  .nav-center, .nav-phone { display: none; }
+  .form-row { grid-template-columns: 1fr; }
+  .cta-banner { padding: 56px 5%; }
+  footer { padding: 56px 5% 32px; }
+}
+@media (max-width: 480px) {
+  .cta-banner { text-align: center; justify-content: center; }
+  .cta-banner-actions { justify-content: center; }
+  .cta-eyebrow { justify-content: center; }
+  .form-card { padding: 32px 24px; }
+}
