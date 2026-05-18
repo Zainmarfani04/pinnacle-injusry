@@ -5,7 +5,7 @@ import type { CaseStatus } from '@/types/database'
 
 export default async function CasesPage() {
   const supabase = await createClient()
-  const adminClient = await createAdminClient()
+  const adminClient = createAdminClient()
   const { data: { user } } = await supabase.auth.getUser()
   const { data: profile } = await adminClient.from('profiles').select('role').eq('id', user!.id).single()
 

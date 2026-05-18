@@ -6,7 +6,7 @@ export async function POST(req: NextRequest) {
     const { token, full_name, password, phone } = await req.json()
     if (!token || !full_name || !password) return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
 
-    const supabase = await createAdminClient()
+    const supabase = createAdminClient()
 
     const { data: invitation, error: invErr } = await supabase
       .from('invitations')

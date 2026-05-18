@@ -18,7 +18,7 @@ export async function POST(req: NextRequest) {
     const token = crypto.randomBytes(32).toString('hex')
     const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString()
 
-    const adminClient = await createAdminClient()
+    const adminClient = createAdminClient()
     const { error } = await adminClient.from('invitations').insert({
       email,
       role,

@@ -4,7 +4,7 @@ import Link from 'next/link'
 
 export default async function DashboardPage() {
   const supabase = await createClient()
-  const adminClient = await createAdminClient()
+  const adminClient = createAdminClient()
   const { data: { user } } = await supabase.auth.getUser()
 
   const [{ data: cases }, { data: profile }, { count: totalClients }] = await Promise.all([

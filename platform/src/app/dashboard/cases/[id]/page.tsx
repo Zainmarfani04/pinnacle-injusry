@@ -7,7 +7,7 @@ import type { CaseStatus } from '@/types/database'
 export default async function CaseDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
   const supabase = await createClient()
-  const adminClient = await createAdminClient()
+  const adminClient = createAdminClient()
   const { data: { user } } = await supabase.auth.getUser()
 
   const [{ data: caseData }, { data: notes }, { data: profile }] = await Promise.all([

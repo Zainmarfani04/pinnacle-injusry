@@ -36,7 +36,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
       }
     }
 
-    const adminClient = await createAdminClient()
+    const adminClient = createAdminClient()
     await adminClient.from('notifications_log').insert({
       case_id: id,
       recipient_id: caseData.client_id,

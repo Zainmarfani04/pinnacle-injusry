@@ -8,7 +8,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
   if (!user) redirect('/login')
 
   // Use admin client to bypass RLS for the profile lookup
-  const adminClient = await createAdminClient()
+  const adminClient = createAdminClient()
   const { data: profile, error: profileError } = await adminClient
     .from('profiles')
     .select('*')

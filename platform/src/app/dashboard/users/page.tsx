@@ -7,7 +7,7 @@ import type { UserRole } from '@/types/database'
 
 export default async function UsersPage() {
   const supabase = await createClient()
-  const adminClient = await createAdminClient()
+  const adminClient = createAdminClient()
   const { data: { user } } = await supabase.auth.getUser()
   const { data: profile } = await adminClient.from('profiles').select('role').eq('id', user!.id).single()
   if (profile?.role !== 'admin') redirect('/dashboard')
