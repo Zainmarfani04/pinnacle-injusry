@@ -1,6 +1,12 @@
+// Required env vars:
+//   NEXT_PUBLIC_SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY
+//   RESEND_API_KEY, RESEND_FROM_EMAIL
+//   NEXT_PUBLIC_APP_URL
+//   ADMIN_EMAIL — intake address for new lead admin alerts (e.g. intake@injurypinnacle.com)
+
 import { NextRequest, NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase/server'
-import { sendEmail } from '@/lib/notifications'
+import { sendNewLeadNotifications } from '@/lib/notifications'
 import { generateCaseNumber } from '@/lib/utils'
 
 const CORS = {
@@ -34,7 +40,11 @@ export async function OPTIONS() {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json()
-    const { first_name, last_name, phone, email, case_type, incident_date, description, utm_source, utm_medium, utm_campaign } = body
+    const {
+      first_name, last_name, phone, email,
+      case_type, incident_date, description,
+      utm_source, utm_medium, utm_campaign,
+    } = body
 
     if (!first_name?.trim() || !last_name?.trim() || !phone?.trim()) {
       return NextResponse.json(
@@ -48,8 +58,9 @@ export async function POST(req: NextRequest) {
     const hasEmail = !!email?.trim()
     const leadEmail = hasEmail ? email.trim() : `lead.${Date.now()}@noreply.pinnacleinjuryconsultants.com`
     const dbCaseType = CASE_TYPE_MAP[case_type] ?? 'other'
+    const typeLabel = CASE_TYPE_LABELS[dbCaseType] ?? case_type
 
-    // Reuse existing profile if email already on file
+    // ── Create or reuse client profile ───────────────────────────────────────
     let clientId: string
     const { data: existingProfile } = await adminClient
       .from('profiles')
@@ -79,7 +90,7 @@ export async function POST(req: NextRequest) {
       clientId = authData.user.id
     }
 
-    // Create lead case
+    // ── Create lead case ──────────────────────────────────────────────────────
     const caseNumber = generateCaseNumber()
     const { data: caseData, error: caseError } = await adminClient
       .from('cases')
@@ -96,45 +107,42 @@ export async function POST(req: NextRequest) {
 
     if (caseError) throw new Error(caseError.message)
 
-    // Notify intake team
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL
-    const typeLabel = CASE_TYPE_LABELS[dbCaseType] ?? case_type
-    const utmLine = utm_source
-      ? `<tr><td style="padding:6px 0;font-size:11px;color:#4e5668;text-transform:uppercase;width:120px">Source</td><td style="padding:6px 0;font-size:14px">${utm_source}${utm_medium ? ` / ${utm_medium}` : ''}${utm_campaign ? ` / ${utm_campaign}` : ''}</td></tr>`
-      : ''
+    // ── Query active specialists for notification ──────────────────────────────
+    let specialistEmails: string[] = []
+    try {
+      const { data: specialists } = await adminClient
+        .from('profiles')
+        .select('email')
+        .eq('role', 'specialist')
+        .eq('is_active', true)
+      specialistEmails = (specialists ?? []).map((s: any) => s.email).filter(Boolean)
+    } catch (err) {
+      console.error('[leads] Failed to query specialists — notifications will still proceed without them:', err)
+    }
 
-    await sendEmail(
-      'intake@pinnacleinjuryconsultants.com',
-      `🔔 New Lead: ${full_name} — ${typeLabel}`,
-      `<div style="font-family:sans-serif;max-width:580px;margin:0 auto;background:#0a0c10;color:#f0f2f7;border-radius:12px;overflow:hidden">
-        <div style="background:linear-gradient(135deg,#c9a84c,#e8c76a);padding:24px 32px">
-          <h1 style="margin:0;color:#0a0c10;font-size:20px;font-weight:700">New Lead — Action Required</h1>
-          <p style="margin:4px 0 0;color:#0a0c10;opacity:.7;font-size:13px">Submitted via pinnacleinjuryconsultants.com</p>
-        </div>
-        <div style="padding:32px">
-          <div style="background:#161b25;border:1px solid rgba(255,255,255,.07);border-radius:8px;padding:20px;margin-bottom:24px">
-            <p style="margin:0 0 4px;font-size:11px;color:#4e5668;text-transform:uppercase;letter-spacing:.06em">Case Number</p>
-            <p style="margin:0 0 20px;font-weight:700;color:#c9a84c;font-size:20px">${caseNumber}</p>
-            <table style="width:100%;border-collapse:collapse">
-              <tr><td style="padding:6px 0;font-size:11px;color:#4e5668;text-transform:uppercase;width:120px">Name</td><td style="padding:6px 0;font-size:14px;font-weight:600">${full_name}</td></tr>
-              <tr><td style="padding:6px 0;font-size:11px;color:#4e5668;text-transform:uppercase">Phone</td><td style="padding:6px 0;font-size:14px"><a href="tel:${phone.trim()}" style="color:#c9a84c;text-decoration:none">${phone.trim()}</a></td></tr>
-              <tr><td style="padding:6px 0;font-size:11px;color:#4e5668;text-transform:uppercase">Email</td><td style="padding:6px 0;font-size:14px">${hasEmail ? email.trim() : '<em style="color:#4e5668">Not provided</em>'}</td></tr>
-              <tr><td style="padding:6px 0;font-size:11px;color:#4e5668;text-transform:uppercase">Case Type</td><td style="padding:6px 0;font-size:14px">${typeLabel}</td></tr>
-              ${incident_date ? `<tr><td style="padding:6px 0;font-size:11px;color:#4e5668;text-transform:uppercase">Incident Date</td><td style="padding:6px 0;font-size:14px">${incident_date}</td></tr>` : ''}
-              ${utmLine}
-            </table>
-            ${description?.trim() ? `<div style="margin-top:16px;padding-top:16px;border-top:1px solid rgba(255,255,255,.07)"><p style="margin:0 0 6px;font-size:11px;color:#4e5668;text-transform:uppercase">Description</p><p style="margin:0;font-size:14px;color:#8d95a8;line-height:1.6">${description.trim()}</p></div>` : ''}
-          </div>
-          <a href="${appUrl}/dashboard/cases/${caseData.id}" style="display:inline-block;background:linear-gradient(135deg,#c9a84c,#e8c76a);color:#0a0c10;font-weight:600;padding:14px 32px;border-radius:8px;text-decoration:none;font-size:14px">
-            Open in CMS →
-          </a>
-          <p style="margin:24px 0 0;font-size:12px;color:#4e5668">Pinnacle Injury Consultants · (832) 707-9867 · Houston, TX</p>
-        </div>
-      </div>`
-    )
+    // ── Fire all notifications (non-blocking — never fails the request) ────────
+    sendNewLeadNotifications(
+      {
+        firstName: first_name.trim(),
+        lastName: last_name.trim(),
+        email: leadEmail,
+        phone: phone.trim(),
+        caseType: typeLabel,
+        incidentDate: incident_date || null,
+        description: description?.trim() || null,
+        caseId: caseData.id,
+        caseNumber,
+      },
+      specialistEmails
+    ).catch((err) => {
+      console.error('[leads] sendNewLeadNotifications threw unexpectedly:', err)
+    })
 
-    // TODO (notification sprint): broadcast new lead to admin + available specialists
-    // notifyTeam({ caseId: caseData.id, caseNumber, clientName: full_name, caseType: dbCaseType })
+    // ESCALATION HOOK — to be implemented in notification sprint phase 2
+    // Trigger: if case status remains 'lead' after 24 hours
+    // Action: re-notify all specialists + notify admin
+    // Implementation: use a cron job or Vercel scheduled function
+    // Ref: Pinnacle notification matrix — Rule 1
 
     return NextResponse.json({ success: true, case_number: caseNumber }, { headers: CORS })
   } catch (err: any) {
