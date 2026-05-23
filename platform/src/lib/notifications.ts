@@ -3,6 +3,13 @@ import { Resend } from 'resend'
 import type { CaseStatus } from '@/types/database'
 import { STATUS_LABELS } from './utils'
 
+if (!process.env.RESEND_API_KEY) {
+  console.warn('[notifications] RESEND_API_KEY is not set — all email sends will fail')
+}
+if (!process.env.RESEND_FROM_EMAIL) {
+  console.warn('[notifications] RESEND_FROM_EMAIL is not set — all email sends will fail')
+}
+
 const resend = new Resend(process.env.RESEND_API_KEY)
 
 function getTwilioClient() {
@@ -26,15 +33,19 @@ export async function sendSMS(to: string, body: string) {
 
 export async function sendEmail(to: string, subject: string, html: string) {
   try {
-    await resend.emails.send({
+    const result = await resend.emails.send({
       from: process.env.RESEND_FROM_EMAIL!,
       to,
       subject,
       html,
     })
+    if ((result as any).error) {
+      console.error(`[notifications] sendEmail failed — to: ${to} | subject: "${subject}" | error:`, (result as any).error)
+      return { success: false, error: (result as any).error }
+    }
     return { success: true }
   } catch (error) {
-    console.error('Email error:', error)
+    console.error(`[notifications] sendEmail threw — to: ${to} | subject: "${subject}" | error:`, error)
     return { success: false, error }
   }
 }

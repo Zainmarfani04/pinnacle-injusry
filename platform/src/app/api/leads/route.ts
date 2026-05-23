@@ -120,8 +120,8 @@ export async function POST(req: NextRequest) {
       console.error('[leads] Failed to query specialists — notifications will still proceed without them:', err)
     }
 
-    // ── Fire all notifications (non-blocking — never fails the request) ────────
-    sendNewLeadNotifications(
+    // ── Fire all notifications — awaited so Vercel does not kill in-flight sends ─
+    await sendNewLeadNotifications(
       {
         firstName: first_name.trim(),
         lastName: last_name.trim(),
@@ -135,6 +135,7 @@ export async function POST(req: NextRequest) {
       },
       specialistEmails
     ).catch((err) => {
+      // Catch here so a catastrophic throw never fails the HTTP response
       console.error('[leads] sendNewLeadNotifications threw unexpectedly:', err)
     })
 
