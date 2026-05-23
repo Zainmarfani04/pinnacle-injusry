@@ -551,6 +551,7 @@
     .form-submit:hover { background: var(--gold); }
     .form-disclaimer { font-size: 11px; color: var(--muted); margin-top: 14px; line-height: 1.6; text-align: center; opacity: 0.65; }
     .success-msg { display: none; background: rgba(34,197,94,0.08); border: 1px solid rgba(34,197,94,0.3); color: #15803d; padding: 16px; font-size: 14px; text-align: center; margin-top: 16px; }
+    .error-msg { display: none; background: rgba(220,38,38,0.06); border: 1px solid rgba(220,38,38,0.25); color: #b91c1c; padding: 16px; font-size: 14px; text-align: center; margin-top: 16px; line-height: 1.6; }
 
     /* ── FOOTER ── */
     footer {
@@ -1157,6 +1158,7 @@
           <input type="hidden" name="utm_campaign" id="utm_campaign" />
           <button type="submit" class="form-submit">Submit My Case &mdash; Free Consultation</button>
           <div id="success-msg" class="success-msg" role="alert">&#10003; Thank you! A member of our team will be in touch within 24 hours.</div>
+          <div id="error-msg" class="error-msg" role="alert"></div>
           <p class="form-disclaimer">By submitting this form, you consent to be contacted by Pinnacle Injury Consultants. All information is kept strictly confidential. This form does not create an attorney-client relationship.</p>
         </form>
       </div>
@@ -1253,30 +1255,60 @@
     (function() {
       var form = document.getElementById('contact-form');
       var successMsg = document.getElementById('success-msg');
+      var errorMsg = document.getElementById('error-msg');
       var submitBtn = form.querySelector('.form-submit');
+
+      function showError(msg) {
+        errorMsg.textContent = msg;
+        errorMsg.style.display = 'block';
+        successMsg.style.display = 'none';
+      }
+
+      function resetBtn() {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Submit My Case — Free Consultation';
+      }
 
       form.addEventListener('submit', function(e) {
         e.preventDefault();
-        var apiUrl = form.dataset.api;
+        errorMsg.style.display = 'none';
+
+        var email = form.email.value.trim();
+
+        // Duplicate detection — block resubmission of same email within 10 minutes
+        var lastEmail = sessionStorage.getItem('pic_submitted_email');
+        var lastTime = parseInt(sessionStorage.getItem('pic_submitted_at') || '0', 10);
+        if (lastEmail && lastEmail === email && email && (Date.now() - lastTime) < 10 * 60 * 1000) {
+          successMsg.innerHTML = '✓ It looks like you already submitted a case. Our team will be in touch within 24 hours.';
+          successMsg.style.display = 'block';
+          return;
+        }
+
         var payload = {
           first_name: form.first_name.value.trim(),
           last_name: form.last_name.value.trim(),
           phone: form.phone.value.trim(),
-          email: form.email.value.trim(),
+          email: email,
           case_type: form.case_type.value,
           incident_date: form.incident_date.value || null,
           description: form.description.value.trim(),
           utm_source: form.utm_source.value || null,
           utm_medium: form.utm_medium.value || null,
           utm_campaign: form.utm_campaign.value || null,
+          source: 'website',
+          referrer: document.referrer || null,
         };
+
         if (!payload.first_name || !payload.last_name || !payload.phone) {
-          alert('Please fill in your name and phone number.');
+          showError('Please fill in your first name, last name, and phone number.');
           return;
         }
+
+        // Disable button immediately to prevent double-click submission
         submitBtn.disabled = true;
         submitBtn.textContent = 'Submitting…';
-        fetch(apiUrl, {
+
+        fetch(form.dataset.api, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload),
@@ -1284,22 +1316,24 @@
           .then(function(res) { return res.json(); })
           .then(function(data) {
             if (data.error) {
-              alert('There was a problem submitting your case: ' + data.error + '\nPlease call us at (832) 707-9867.');
-              submitBtn.disabled = false;
-              submitBtn.textContent = 'Submit My Case — Free Consultation';
+              showError('There was a problem submitting your case: ' + data.error + ' — please call us at (832) 707-9867.');
+              resetBtn();
             } else {
-              successMsg.innerHTML = '✓ Thank you! Your case has been received' + (data.case_number ? ' (' + data.case_number + ')' : '') + '. A specialist will contact you within 24 hours.';
+              // Store in sessionStorage to prevent duplicate submissions
+              if (email) {
+                sessionStorage.setItem('pic_submitted_email', email);
+                sessionStorage.setItem('pic_submitted_at', String(Date.now()));
+              }
+              successMsg.innerHTML = '✓ Your case has been received' + (data.case_number ? ' (' + data.case_number + ')' : '') + '. A specialist will contact you within 24 hours.';
               successMsg.style.display = 'block';
               form.reset();
-              submitBtn.disabled = false;
-              submitBtn.textContent = 'Submit My Case — Free Consultation';
-              setTimeout(function() { successMsg.style.display = 'none'; }, 12000);
+              // Keep button disabled after success to prevent duplicate submissions
+              submitBtn.textContent = 'Case Submitted ✓';
             }
           })
           .catch(function() {
-            alert('Unable to submit your case right now. Please call us directly at (832) 707-9867.');
-            submitBtn.disabled = false;
-            submitBtn.textContent = 'Submit My Case — Free Consultation';
+            showError('Unable to submit right now — please call us directly at (832) 707-9867. We\'re available Mon–Fri 8am–7pm, Sat 9am–3pm.');
+            resetBtn();
           });
       });
     })();
