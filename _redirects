@@ -1,0 +1,11 @@
+# Pinnacle Injury Consultants — Netlify Redirect Rules
+# Updated: 2026-05-22
+
+# Enforce www → non-www (301 permanent, forced)
+https://www.injurypinnacle.com/* https://injurypinnacle.com/:splat 301!
+
+# Enforce http www → https non-www (301 permanent, forced)
+http://www.injurypinnacle.com/* https://injurypinnacle.com/:splat 301!
+
+# Enforce http → https non-www (301 permanent, forced)
+http://injurypinnacle.com/* https://injurypinnacle.com/:splat 301!
