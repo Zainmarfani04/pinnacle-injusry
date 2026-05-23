@@ -133,6 +133,9 @@ export async function POST(req: NextRequest) {
       </div>`
     )
 
+    // TODO (notification sprint): broadcast new lead to admin + available specialists
+    // notifyTeam({ caseId: caseData.id, caseNumber, clientName: full_name, caseType: dbCaseType })
+
     return NextResponse.json({ success: true, case_number: caseNumber }, { headers: CORS })
   } catch (err: any) {
     console.error('[leads] Error:', err)
