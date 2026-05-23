@@ -6,9 +6,6 @@ import { STATUS_LABELS } from './utils'
 if (!process.env.RESEND_API_KEY) {
   console.warn('[notifications] RESEND_API_KEY is not set — all email sends will fail')
 }
-if (!process.env.RESEND_FROM_EMAIL) {
-  console.warn('[notifications] RESEND_FROM_EMAIL is not set — all email sends will fail')
-}
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 
@@ -34,7 +31,7 @@ export async function sendSMS(to: string, body: string) {
 export async function sendEmail(to: string, subject: string, html: string) {
   try {
     const result = await resend.emails.send({
-      from: process.env.RESEND_FROM_EMAIL!,
+      from: 'noreply@injurypinnacle.com',
       to,
       subject,
       html,
